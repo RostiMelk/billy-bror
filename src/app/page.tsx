@@ -61,6 +61,10 @@ export default function Home() {
     const activeSubscription = client
       .listen<EntryEvent>(ACTIVE_ENTRY_QUERY, {}, { visibility: "query" })
       .subscribe((update) => {
+        if (update.type === "mutation" && update.eventId === "delete") {
+          setActiveEntry(null);
+          return;
+        }
         // @ts-ignore result is not null
         const entry = update.result;
         if (!entry) return;
@@ -70,14 +74,26 @@ export default function Home() {
     const latestSubscription = client
       .listen<EntryEvent>(ALL_ENTRIES, {}, { visibility: "query" })
       .subscribe((update) => {
-        // @ts-ignore result is not null
-        const entry = update.result;
-        setAllEntries((entries) => {
-          const index = entries.findIndex((prev) => prev._id === entry._id);
-          return index === -1
-            ? [entry, ...entries]
-            : entries.map((entry, i) => (i === index ? entry : entry));
-        });
+        if (update.type === "mutation") {
+          if (update.eventId === "delete") {
+            setAllEntries((entries) =>
+              entries.filter((entry) => entry._id !== update.documentId),
+            );
+          } else {
+            const entry = update.result;
+            if (entry) {
+              // @ts-ignore result is not null
+              setAllEntries((entries) => {
+                const index = entries.findIndex(
+                  (prev) => prev._id === entry._id,
+                );
+                return index === -1
+                  ? [entry, ...entries]
+                  : entries.map((e, i) => (i === index ? entry : e));
+              });
+            }
+          }
+        }
       });
 
     return () => {
