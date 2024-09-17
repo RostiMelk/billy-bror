@@ -73,7 +73,7 @@ export default function Home() {
     const latestSubscription = client
       .listen<EntryEvent>(ALL_ENTRIES, {}, { visibility: "query" })
       .subscribe((update) => {
-        if (update.type === "mutation" && update.eventId === "delete") {
+        if (update.type === "mutation" && update.transition === "disappear") {
           setAllEntries((entries) =>
             entries.filter((entry) => entry._id !== update.documentId),
           );
