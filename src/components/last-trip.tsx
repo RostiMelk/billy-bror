@@ -4,7 +4,7 @@ export const LastTrip = async () => {
   const data = await getLatestOutsideEntry();
 
   if (!data) {
-    return null;
+    return <h1 className="text-4xl font-medium">Gå ut og tiss!</h1>;
   }
 
   const formatTimeAndDate = () => {
@@ -65,7 +65,7 @@ export const LastTrip = async () => {
 export const LastTripSkeleton = () => {
   return (
     <div>
-      <h2 className="text-2xl mb-2">Sist tur var</h2>
+      <h1 className="text-2xl mb-2">Sist tur var</h1>
       <div className="text-5xl tabular-nums font-medium animate-pulse w-1/2 h-10 mx-auto bg-secondary rounded-md" />
       <div className="mt-6 flex gap-2 text-3xl justify-center">
         <span className="animate-pulse">🐶</span>
