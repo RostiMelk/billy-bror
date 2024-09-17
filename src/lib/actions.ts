@@ -1,22 +1,22 @@
 "use server";
 
-import { client } from "@/lib/sanity";
+import { serverClient } from "@/lib/sanity";
 import { type EntryDocument, AutoEntry, ManualEntry } from "@/types/entry";
 import { randomUUID } from "node:crypto";
 
 export async function getActiveEntry(): Promise<EntryDocument | null> {
   const query = `*[_type == "entry" && status == "active" && mode == "auto"][0]`;
-  return client.fetch(query);
+  return serverClient.fetch(query);
 }
 
 export async function getLatestOutsideEntry(): Promise<EntryDocument | null> {
   const query = `*[_type == "entry" && location == "outside"] | order(startTime desc) [0]`;
-  return client.fetch(query);
+  return serverClient.fetch(query);
 }
 
 export async function getAllCompletedEntries(): Promise<EntryDocument[]> {
   const query = `*[_type == "entry" && status == "completed"] | order(startTime desc)`;
-  return client.fetch(query);
+  return serverClient.fetch(query);
 }
 
 export async function addManualEntry(entry: ManualEntry) {
@@ -33,7 +33,7 @@ export async function addManualEntry(entry: ManualEntry) {
     ...validatedEntry.data,
   };
 
-  await client.create(newDocument);
+  await serverClient.create(newDocument);
 }
 
 export async function startEntry() {
@@ -46,7 +46,7 @@ export async function startEntry() {
     location: "outside",
   };
 
-  return client.create(newDocument);
+  return serverClient.create(newDocument);
 }
 
 export async function updateEntry(entryId: string, entry: AutoEntry) {
@@ -55,7 +55,7 @@ export async function updateEntry(entryId: string, entry: AutoEntry) {
     throw new Error("Invalid entry data");
   }
 
-  const existingEntry = await client.getDocument<EntryDocument>(entryId);
+  const existingEntry = await serverClient.getDocument<EntryDocument>(entryId);
   if (!existingEntry) {
     throw new Error("Entry not found");
   }
@@ -66,5 +66,9 @@ export async function updateEntry(entryId: string, entry: AutoEntry) {
     status: "completed",
   };
 
-  await client.createOrReplace(updatedEntry);
+  await serverClient.createOrReplace(updatedEntry);
+}
+
+export async function deleteEntry(entryId: string) {
+  await serverClient.delete(entryId);
 }

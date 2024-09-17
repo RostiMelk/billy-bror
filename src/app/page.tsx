@@ -1,16 +1,21 @@
 "use client";
 
-import { getActiveEntry, startEntry } from "@/lib/actions";
+import { startEntry } from "@/lib/actions";
 import type { EntryDocument } from "@/types/entry";
 import { Button } from "@/components/ui/button";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SubmitDialog } from "@/components/submit-dialog";
 import { Timer } from "@/components/timer";
-import { LastTrip, LastTripSkeleton } from "@/components/last-trip";
+import { AllTrips } from "@/components/all-trips";
 import { PlusIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Header } from "@/components/header";
 import Link from "next/link";
+import { client } from "@/lib/sanity";
+import groq from "groq";
+import type { MutationEvent } from "@sanity/client";
+const ACTIVE_ENTRY_QUERY = groq`*[_type == "entry" && status == "active" && mode == "auto"][0]`;
+const ALL_ENTRIES = groq`*[_type == "entry" && status == "completed"] | order(endTime desc)`;
 
 const motionProps = {
   initial: { opacity: 0, y: 20 },
@@ -18,28 +23,66 @@ const motionProps = {
   exit: { opacity: 0, y: -20 },
 };
 
+type EntryEvent = MutationEvent<EntryDocument>;
+
 export default function Home() {
   const [activeEntry, setActiveEntry] = useState<EntryDocument | null>(null);
+  const [editingEntry, setEditingEntry] = useState<EntryDocument | null>(null);
+  const [allEntries, setAllEntries] = useState<EntryDocument[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showSubmitDialog, setShowSubmitDialog] = useState<boolean>(false);
 
   const handleOpenSubmit = useCallback(() => setShowSubmitDialog(true), []);
-  const handleCloseSubmit = useCallback(() => setShowSubmitDialog(false), []);
+  const handleEditEntry = useCallback((entry: EntryDocument) => {
+    setShowSubmitDialog(true);
+    setEditingEntry(entry);
+  }, []);
+  const handleCloseSubmit = useCallback(() => {
+    setShowSubmitDialog(false);
+    setEditingEntry(null);
+  }, []);
   const handleSubmitted = useCallback(() => {
     setShowSubmitDialog(false);
     setActiveEntry(null);
+    setEditingEntry(null);
   }, []);
 
-  const fetchEntry = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const fetchedEntry = await getActiveEntry();
-      setActiveEntry(fetchedEntry || null);
-    } catch (error) {
-      console.error("Error fetching entry:", error);
-    } finally {
+  useEffect(() => {
+    setIsLoading(true);
+    Promise.all([
+      client.fetch(ACTIVE_ENTRY_QUERY),
+      client.fetch(ALL_ENTRIES),
+    ]).then(([activeEntry, allEntries]) => {
+      setActiveEntry(activeEntry);
+      setAllEntries(allEntries);
       setIsLoading(false);
-    }
+    });
+
+    const activeSubscription = client
+      .listen<EntryEvent>(ACTIVE_ENTRY_QUERY, {}, { visibility: "query" })
+      .subscribe((update) => {
+        if (!update.result) return;
+        setActiveEntry(update.result);
+      });
+
+    const latestSubscription = client
+      .listen<EntryEvent>(ALL_ENTRIES, {}, { visibility: "query" })
+      .subscribe((update) => {
+        if (!update.result) return;
+        setAllEntries((entries) => {
+          const index = entries.findIndex(
+            (entry) => entry._id === update.result._id,
+          );
+          return index === -1
+            ? [update.result, ...entries]
+            : entries.map((entry, i) => (i === index ? update.result : entry));
+        });
+      });
+
+    return () => {
+      activeSubscription.unsubscribe();
+      latestSubscription.unsubscribe();
+    };
   }, []);
 
   const handleStartEntry = useCallback(async () => {
@@ -63,9 +106,7 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchEntry();
-  }, [fetchEntry]);
+  console.log("allEntries", allEntries);
 
   if (isLoading) return null;
 
@@ -97,9 +138,7 @@ export default function Home() {
               </motion.div>
             ) : (
               <motion.div key="lastTrip" {...motionProps}>
-                <Suspense fallback={<LastTripSkeleton />}>
-                  <LastTrip />
-                </Suspense>
+                <AllTrips entries={allEntries} onEdit={handleEditEntry} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -140,7 +179,7 @@ export default function Home() {
       </div>
 
       <SubmitDialog
-        entry={activeEntry}
+        entry={editingEntry || activeEntry}
         open={showSubmitDialog}
         onClose={handleCloseSubmit}
         onSubmit={handleSubmitted}

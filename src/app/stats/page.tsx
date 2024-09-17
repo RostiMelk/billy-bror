@@ -22,7 +22,7 @@ export default async function Stats() {
     <>
       <Header>
         <Button size="sm" variant="secondary" asChild>
-          <Link href="/">Home</Link>
+          <Link href="/">Hjem</Link>
         </Button>
       </Header>
 
