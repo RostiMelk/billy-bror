@@ -1,0 +1,66 @@
+import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { getAllCompletedEntries } from "@/lib/actions";
+import { ChartPeePoo } from "@/components/chart-pee-poo";
+import { ChartTripsPerDay } from "@/components/chart-trips-per-day";
+import { StatCard } from "@/components/start-card";
+import {
+  processEntriesForPoopPeeChart,
+  processEntriesForTripsChart,
+  calculateStats,
+} from "@/lib/processEntriesForCharts";
+
+export default async function Stats() {
+  const entries = await getAllCompletedEntries();
+
+  const poopPeeChartData = processEntriesForPoopPeeChart(entries);
+  const tripsChartData = processEntriesForTripsChart(entries);
+  const stats = calculateStats(entries);
+
+  return (
+    <>
+      <Header>
+        <Button size="sm" variant="secondary" asChild>
+          <Link href="/">Home</Link>
+        </Button>
+      </Header>
+
+      <main className="my-8">
+        <h1 className="text-xl font-semibold mb-4">Billys statistikk</h1>
+
+        <div className="grid grid-cols-2 mb-8">
+          <StatCard title="Total Trips" value={stats.totalTrips} />
+          <StatCard
+            title="Avg Trips/Day"
+            value={stats.averageTripsPerDay.toFixed(1)}
+          />
+          <StatCard title="Total Poops" value={stats.totalPoops} />
+          <StatCard title="Total Pees" value={stats.totalPees} />
+          <StatCard
+            title="Longest Trip"
+            value={`${stats.longestTrip} minutes`}
+          />
+          <StatCard
+            title="Success Rate"
+            value={`${(stats.successRate * 100).toFixed(1)}%`}
+          />
+          <StatCard
+            title="Avg Trip Duration"
+            value={`${stats.averageTripDuration.toFixed(1)} minutes`}
+          />
+        </div>
+
+        <h2 className="text-lg font-semibold mb-2">Tiss og bæsj over tid</h2>
+        <div className="w-full mb-8">
+          <ChartPeePoo chartData={poopPeeChartData} />
+        </div>
+
+        <h2 className="text-lg font-semibold mb-2">Turer per dag</h2>
+        <div className="w-full">
+          <ChartTripsPerDay chartData={tripsChartData} />
+        </div>
+      </main>
+    </>
+  );
+}

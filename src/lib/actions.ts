@@ -14,6 +14,11 @@ export async function getLatestOutsideEntry(): Promise<EntryDocument | null> {
   return client.fetch(query);
 }
 
+export async function getAllCompletedEntries(): Promise<EntryDocument[]> {
+  const query = `*[_type == "entry" && status == "completed"] | order(startTime desc)`;
+  return client.fetch(query);
+}
+
 export async function addManualEntry(entry: ManualEntry) {
   const validatedEntry = ManualEntry.safeParse(entry);
   if (!validatedEntry.success) {

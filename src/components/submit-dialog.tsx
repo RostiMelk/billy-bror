@@ -68,7 +68,10 @@ export const SubmitDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="p-4 max-w-sm !w-[90dvw]">
+      <DialogContent
+        className="p-4 max-w-sm !w-[90dvw]"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader className="mb-1">
           <DialogDescription>
             {entry
@@ -106,7 +109,6 @@ export const SubmitDialog = ({
               min={0}
               step={0.1}
               defaultValue={entry?.pees || 0}
-              autoFocus={false}
             />
           </div>
 
@@ -121,7 +123,6 @@ export const SubmitDialog = ({
               min={0}
               step={0.1}
               defaultValue={entry?.pees || 0}
-              autoFocus={false}
             />
           </div>
 
@@ -136,7 +137,7 @@ export const SubmitDialog = ({
                 required
                 type="time"
                 defaultValue={formatTimeToHtmlInput(entry?.startTime)}
-                autoFocus={false}
+                className="block"
               />
             </div>
 
@@ -150,7 +151,7 @@ export const SubmitDialog = ({
                 required
                 type="time"
                 defaultValue={formatTimeToHtmlInput(entry?.endTime)}
-                autoFocus={false}
+                className="block"
               />
             </div>
           </fieldset>
