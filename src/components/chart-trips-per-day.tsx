@@ -24,7 +24,7 @@ type ChartData = {
 export function ChartTripsPerDay({ chartData }: { chartData: ChartData[] }) {
   const chartConfig = {
     trips: {
-      label: "Trips",
+      label: "Turer",
       color: "hsl(var(--chart-5))",
     },
   };

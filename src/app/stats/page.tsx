@@ -14,9 +14,9 @@ import {
 export default async function Stats() {
   const entries = (await getAllCompletedEntries()) || [];
 
+  const stats = calculateStats(entries);
   const poopPeeChartData = processEntriesForPoopPeeChart(entries);
   const tripsChartData = processEntriesForTripsChart(entries);
-  const stats = calculateStats(entries);
 
   return (
     <>
@@ -27,8 +27,6 @@ export default async function Stats() {
       </Header>
 
       <main className="my-8">
-        <h1 className="text-xl font-semibold mb-4">Billys statistikk</h1>
-
         <div className="grid grid-cols-2 mb-8">
           <StatCard title="Total Trips" value={stats.totalTrips} />
           <StatCard
@@ -51,12 +49,16 @@ export default async function Stats() {
           />
         </div>
 
-        <h2 className="text-lg font-semibold mb-2">Tiss og bæsj over tid</h2>
+        <h2 className="text-lg text-center my-2 font-semibold mb-2">
+          Tiss og bæsj over tid
+        </h2>
         <div className="w-full mb-8">
           <ChartPeePoo chartData={poopPeeChartData} />
         </div>
 
-        <h2 className="text-lg font-semibold mb-2">Turer per dag</h2>
+        <h2 className="text-lg text-center my-2 font-semibold mb-2">
+          Turer per dag
+        </h2>
         <div className="w-full">
           <ChartTripsPerDay chartData={tripsChartData} />
         </div>

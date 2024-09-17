@@ -27,19 +27,19 @@ type ChartData = {
 export function ChartPeePoo({ chartData }: { chartData: ChartData[] }) {
   const chartConfig = {
     outsidePoops: {
-      label: "Outside Poops",
+      label: "💩 ute",
       color: "hsl(var(--chart-1))",
     },
     outsidePees: {
-      label: "Outside Pees",
+      label: "💦 ute",
       color: "hsl(var(--chart-2))",
     },
     insidePoops: {
-      label: "Inside Poops",
+      label: "💩 inne",
       color: "hsl(var(--chart-3))",
     },
     insidePees: {
-      label: "Inside Pees",
+      label: "💦 inne",
       color: "hsl(var(--chart-4))",
     },
   };
