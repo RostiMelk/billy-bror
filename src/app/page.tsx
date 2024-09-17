@@ -106,8 +106,6 @@ export default function Home() {
     }
   }, []);
 
-  console.log("allEntries", allEntries);
-
   if (isLoading) return null;
 
   return (
