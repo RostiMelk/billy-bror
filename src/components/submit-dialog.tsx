@@ -153,7 +153,6 @@ export const SubmitDialog = ({
                     required
                     type="time"
                     defaultValue={formatTimeToHtmlInput(entry?.startTime)}
-                    className="block"
                   />
                 </div>
 
@@ -167,7 +166,6 @@ export const SubmitDialog = ({
                     required
                     type="time"
                     defaultValue={formatTimeToHtmlInput(entry?.endTime)}
-                    className="block"
                   />
                 </div>
               </motion.fieldset>
