@@ -75,6 +75,7 @@ export function NumberInput({
         type="button"
         variant="outline"
         size="icon"
+        className="h-10 w-10"
         onClick={decrement}
         disabled={value <= min}
       >
@@ -96,6 +97,7 @@ export function NumberInput({
         type="button"
         variant="outline"
         size="icon"
+        className="h-10 w-10"
         onClick={increment}
         disabled={value >= max}
       >

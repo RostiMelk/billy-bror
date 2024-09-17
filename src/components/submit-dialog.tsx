@@ -1,5 +1,3 @@
-"use client";
-
 import type { ManualEntry, AutoEntry, EntryDocument } from "@/types/entry";
 import {
   Dialog,
@@ -11,9 +9,9 @@ import { Button } from "@/components/ui/button";
 import { NumberInput } from "@/components/ui/number-input";
 import { Input } from "@/components/ui/input";
 import { addManualEntry, updateEntry } from "@/lib/actions";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 interface SubmitDialogProps {
   entry: EntryDocument | null;
@@ -29,21 +27,31 @@ export const SubmitDialog = ({
   onSubmit,
 }: SubmitDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [location, setLocation] = useState("inside");
+
+  const formatTimeToHtmlInput = useCallback((date?: string) => {
+    return new Date(date || new Date()).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }, []);
+
+  const formatTimeToDate = useCallback((time?: string) => {
+    const currentDate = new Date().toISOString().split("T")[0];
+    return new Date(`${currentDate}T${time}:00`).toISOString();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     const formData = new FormData(e.currentTarget);
+
     const data = {
-      startTime: new Date(
-        `${new Date().toISOString().split("T")[0]}T${formData.get("startTime")}:00`,
-      ).toISOString(),
-      endTime: new Date(
-        `${new Date().toISOString().split("T")[0]}T${formData.get("endTime")}:00`,
-      ).toISOString(),
+      startTime: formatTimeToDate(formData.get("startTime") as string),
+      endTime: formatTimeToDate(formData.get("endTime") as string),
       poops: Number(formData.get("poops") || 0),
       pees: Number(formData.get("pees") || 0),
-      location: formData.get("location"),
+      location: entry ? undefined : location, // Only set location if it's a manual entry
     };
 
     console.log(data);
@@ -56,13 +64,6 @@ export const SubmitDialog = ({
 
     setIsLoading(false);
     onSubmit();
-  };
-
-  const formatTimeToHtmlInput = (date?: string) => {
-    return new Date(date || new Date()).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
   };
 
   return (
@@ -82,14 +83,13 @@ export const SubmitDialog = ({
               <label htmlFor="location" className="text-sm font-medium">
                 Hvor var Billy?
               </label>
-              <Tabs defaultValue="inside">
+              <Tabs
+                defaultValue={location}
+                onValueChange={(value) => setLocation(value)}
+              >
                 <TabsList>
-                  <TabsTrigger name="location" value="inside" aria-selected>
-                    Inne
-                  </TabsTrigger>
-                  <TabsTrigger name="location" value="outside">
-                    Ute
-                  </TabsTrigger>
+                  <TabsTrigger value="inside">Inne</TabsTrigger>
+                  <TabsTrigger value="outside">Ute</TabsTrigger>
                 </TabsList>
               </Tabs>
             </fieldset>
@@ -106,6 +106,7 @@ export const SubmitDialog = ({
               min={0}
               step={0.1}
               defaultValue={entry?.pees || 0}
+              autoFocus={false}
             />
           </div>
 
@@ -120,6 +121,7 @@ export const SubmitDialog = ({
               min={0}
               step={0.1}
               defaultValue={entry?.pees || 0}
+              autoFocus={false}
             />
           </div>
 
@@ -134,6 +136,7 @@ export const SubmitDialog = ({
                 required
                 type="time"
                 defaultValue={formatTimeToHtmlInput(entry?.startTime)}
+                autoFocus={false}
               />
             </div>
 
@@ -147,12 +150,13 @@ export const SubmitDialog = ({
                 required
                 type="time"
                 defaultValue={formatTimeToHtmlInput(entry?.endTime)}
+                autoFocus={false}
               />
             </div>
           </fieldset>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Lagre tur
           </Button>
         </form>

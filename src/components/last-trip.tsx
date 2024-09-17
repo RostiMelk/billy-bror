@@ -61,3 +61,15 @@ export const LastTrip = async () => {
     </div>
   );
 };
+
+export const LastTripSkeleton = () => {
+  return (
+    <div>
+      <h2 className="text-2xl mb-2">Sist tur var</h2>
+      <div className="text-5xl tabular-nums font-medium animate-pulse w-1/2 h-10 mx-auto bg-secondary rounded-md" />
+      <div className="mt-6 flex gap-2 text-3xl justify-center">
+        <span className="animate-pulse">🐶</span>
+      </div>
+    </div>
+  );
+};

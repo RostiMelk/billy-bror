@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { SubmitDialog } from "@/components/submit-dialog";
 import { Timer } from "@/components/timer";
-import { LastTrip } from "./last-trip";
+import { LastTrip, LastTripSkeleton } from "./last-trip";
 import { PlusIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -23,8 +23,8 @@ export const LiveTracker = () => {
   }, []);
 
   const fetchEntry = useCallback(async () => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       const fetchedEntry = await getActiveEntry();
       setActiveEntry(fetchedEntry || null);
     } catch (error) {
@@ -76,7 +76,7 @@ export const LiveTracker = () => {
               variant="secondary"
               onClick={handleOpenSubmit}
             >
-              <PlusIcon className="w-5 h-5" />
+              <PlusIcon className="w-4 h-4" />
             </Button>
           )}
         </header>
@@ -89,7 +89,6 @@ export const LiveTracker = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
               >
                 <Timer startTime={activeEntry.startTime} />
               </motion.div>
@@ -99,9 +98,8 @@ export const LiveTracker = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
               >
-                <Suspense>
+                <Suspense fallback={<LastTripSkeleton />}>
                   <LastTrip />
                 </Suspense>
               </motion.div>
