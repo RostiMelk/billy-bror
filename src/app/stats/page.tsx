@@ -12,7 +12,7 @@ import {
 } from "@/lib/processEntriesForCharts";
 
 export default async function Stats() {
-  const entries = await getAllCompletedEntries();
+  const entries = (await getAllCompletedEntries()) || [];
 
   const poopPeeChartData = processEntriesForPoopPeeChart(entries);
   const tripsChartData = processEntriesForTripsChart(entries);
