@@ -58,7 +58,31 @@ export function processEntriesForTripsChart(entries: EntryDocument[]) {
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
-export function calculateStats(entries: EntryDocument[]) {
+export function calculateStats(entries: EntryDocument[]): {
+  totalTrips: number;
+  totalPoops: number;
+  totalPees: number;
+  averageTripsPerDay: number;
+  mostCommonLocation: string;
+  longestTrip: number;
+  successRate: number;
+  outdoorPercentage: number;
+  averageTripDuration: number;
+} {
+  if (entries.length === 0) {
+    return {
+      totalTrips: 0,
+      totalPoops: 0,
+      totalPees: 0,
+      averageTripsPerDay: 0,
+      mostCommonLocation: "N/A",
+      longestTrip: 0,
+      successRate: 0,
+      outdoorPercentage: 0,
+      averageTripDuration: 0,
+    };
+  }
+
   const totalTrips = entries.length;
   const totalPoops = entries.reduce(
     (sum, entry) => sum + (entry.poops || 0),
@@ -82,9 +106,12 @@ export function calculateStats(entries: EntryDocument[]) {
     {} as Record<Location, number>,
   );
 
-  const mostCommonLocation = Object.entries(locationCounts).sort(
+  const mostCommonLocationEntry = Object.entries(locationCounts).sort(
     (a, b) => b[1] - a[1],
-  )[0][0];
+  )[0];
+  const mostCommonLocation = mostCommonLocationEntry
+    ? mostCommonLocationEntry[0]
+    : "N/A";
 
   const longestTrip = entries.reduce((longest, entry) => {
     if (entry.endTime) {

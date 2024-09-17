@@ -4,7 +4,7 @@ export const LastTrip = async () => {
   const data = await getLatestOutsideEntry();
 
   if (!data) {
-    return <h1 className="text-4xl font-medium">Gå ut og tiss!</h1>;
+    return <h1 className="text-4xl font-semibold">Gå ut og tiss!</h1>;
   }
 
   const formatTimeAndDate = () => {
