@@ -61,21 +61,22 @@ export default function Home() {
     const activeSubscription = client
       .listen<EntryEvent>(ACTIVE_ENTRY_QUERY, {}, { visibility: "query" })
       .subscribe((update) => {
-        if (!update.result) return;
-        setActiveEntry(update.result);
+        // @ts-ignore result is not null
+        const entry = update.result;
+        if (!entry) return;
+        setActiveEntry(entry);
       });
 
     const latestSubscription = client
       .listen<EntryEvent>(ALL_ENTRIES, {}, { visibility: "query" })
       .subscribe((update) => {
-        if (!update.result) return;
+        // @ts-ignore result is not null
+        const entry = update.result;
         setAllEntries((entries) => {
-          const index = entries.findIndex(
-            (entry) => entry._id === update.result._id,
-          );
+          const index = entries.findIndex((prev) => prev._id === entry._id);
           return index === -1
-            ? [update.result, ...entries]
-            : entries.map((entry, i) => (i === index ? update.result : entry));
+            ? [entry, ...entries]
+            : entries.map((entry, i) => (i === index ? entry : entry));
         });
       });
 
