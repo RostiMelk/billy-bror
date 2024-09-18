@@ -20,7 +20,7 @@ export default async function Stats() {
   const tripsChartData = processEntriesForTripsChart(thisWeeksEntries);
 
   return (
-    <>
+    <div className="p-4">
       <Header>
         <Button size="sm" variant="secondary" asChild>
           <Link href="/">Hjem</Link>
@@ -79,6 +79,6 @@ export default async function Stats() {
           <ChartTripsPerDay chartData={tripsChartData} />
         </div>
       </main>
-    </>
+    </div>
   );
 }

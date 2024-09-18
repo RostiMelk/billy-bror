@@ -8,7 +8,7 @@ interface AllTripsProps {
 
 export const AllTrips = ({ entries, onEdit }: AllTripsProps) => {
   return (
-    <div className="max-h-[70dvh] overflow-auto fade">
+    <div>
       {entries?.map((entry) => (
         <TripRow key={entry._id} entry={entry} onEdit={onEdit} />
       ))}

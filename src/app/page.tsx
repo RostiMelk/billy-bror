@@ -134,7 +134,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="text-center flex flex-col justify-between">
+      <div className="text-center grid grid-rows-[auto,1fr,auto] h-[100dvh] p-4">
         <Header>
           <Button variant="outline" size="sm" asChild>
             <Link href="/stats">Statistikk</Link>
@@ -152,7 +152,7 @@ export default function Home() {
           )}
         </Header>
 
-        <main>
+        <main className="overflow-auto fade">
           <AnimatePresence mode="wait">
             {activeEntry ? (
               <motion.div key="timer" {...motionProps}>
