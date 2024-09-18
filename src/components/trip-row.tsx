@@ -4,11 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import type { EntryDocument } from "@/types/entry";
 
-interface AllTripsProps {
-  entries: EntryDocument[];
-  onEdit: (entry: EntryDocument) => void;
-}
-
 interface TripRowProps {
   entry: EntryDocument;
   onEdit: (entry: EntryDocument) => void;
