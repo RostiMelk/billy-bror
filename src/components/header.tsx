@@ -7,7 +7,15 @@ interface HeaderProps {
 export const Header = ({ children }: HeaderProps) => {
   return (
     <header className="h-10 flex justify-between items-center">
-      <Link href="/">
+      <Link
+        href="/"
+        onClick={(e) => {
+          if (window.location.pathname === "/") {
+            e.preventDefault();
+            window.location.reload();
+          }
+        }}
+      >
         <h2 className="text-lg font-semibold text-secondary-foreground">
           🐶 Billy Bror
         </h2>
