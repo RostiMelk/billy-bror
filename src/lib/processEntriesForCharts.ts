@@ -1,12 +1,21 @@
 import type { EntryDocument, Location } from "@/types/entry";
 
+const dateOptions: Intl.DateTimeFormatOptions = {
+  year: "2-digit",
+  month: "short",
+  day: "2-digit",
+};
+
 /**
  * Process entries for poop and pee chart
  */
 export function processEntriesForPoopPeeChart(entries: EntryDocument[]) {
   const dailyStats = entries.reduce(
     (acc, entry) => {
-      const date = new Date(entry.startTime).toISOString().split("T")[0];
+      const date = new Date(entry.startTime).toLocaleDateString(
+        "no-NO",
+        dateOptions,
+      );
       if (!acc[date]) {
         acc[date] = {
           outsidePoops: 0,
@@ -43,7 +52,11 @@ export function processEntriesForPoopPeeChart(entries: EntryDocument[]) {
 
   return Object.entries(dailyStats)
     .map(([date, stats]) => ({ date, ...stats }))
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .sort(
+      (a, b) =>
+        new Date(a.date.split(".").reverse().join("-")).getTime() -
+        new Date(b.date.split(".").reverse().join("-")).getTime(),
+    );
 }
 
 /**
@@ -52,7 +65,10 @@ export function processEntriesForPoopPeeChart(entries: EntryDocument[]) {
 export function processEntriesForTripsChart(entries: EntryDocument[]) {
   const dailyTrips = entries.reduce(
     (acc, entry) => {
-      const date = new Date(entry.startTime).toISOString().split("T")[0];
+      const date = new Date(entry.startTime).toLocaleDateString(
+        "no-NO",
+        dateOptions,
+      );
       acc[date] = (acc[date] || 0) + 1;
       return acc;
     },
@@ -61,7 +77,11 @@ export function processEntriesForTripsChart(entries: EntryDocument[]) {
 
   return Object.entries(dailyTrips)
     .map(([date, trips]) => ({ date, trips }))
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .sort(
+      (a, b) =>
+        new Date(a.date.split(".").reverse().join("-")).getTime() -
+        new Date(b.date.split(".").reverse().join("-")).getTime(),
+    );
 }
 
 /**
@@ -144,7 +164,7 @@ export function calculateStats(entries: EntryDocument[]): {
     outdoorTripsWithToiletVisits.length / tripsWithToiletVisits.length;
   const outdoorPercentage = totalOutsideTrips / totalTrips;
 
-  const totalOutsideTripDuration = outdoorTrips.reduce((sum, entry) => {
+  const totalDuration = outdoorTrips.reduce((sum, entry) => {
     if (entry.endTime) {
       return (
         sum +
@@ -155,7 +175,7 @@ export function calculateStats(entries: EntryDocument[]): {
     }
     return sum;
   }, 0);
-  const averageTripDuration = totalOutsideTripDuration / totalOutsideTrips;
+  const averageTripDuration = totalDuration / totalOutsideTrips;
 
   return {
     totalTrips,

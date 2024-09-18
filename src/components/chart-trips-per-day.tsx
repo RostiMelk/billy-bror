@@ -25,7 +25,7 @@ export function ChartTripsPerDay({ chartData }: { chartData: ChartData[] }) {
   const chartConfig = {
     trips: {
       label: "Turer",
-      color: "hsl(var(--chart-5))",
+      color: "hsl(var(--chart-1))",
     },
   };
 
@@ -37,7 +37,6 @@ export function ChartTripsPerDay({ chartData }: { chartData: ChartData[] }) {
           <XAxis dataKey="date" />
           <YAxis />
           <ChartTooltip content={<ChartTooltipContent />} />
-          <ChartLegend content={<ChartLegendContent />} />
           <Bar dataKey="trips" fill="var(--color-trips)" />
         </BarChart>
       </ResponsiveContainer>
