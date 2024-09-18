@@ -11,6 +11,8 @@ import {
   calculateStats,
 } from "@/lib/processEntriesForCharts";
 
+export const fetchCache = "force-no-store";
+
 export default async function Stats() {
   const entries = (await getAllCompletedEntries()) || [];
 
