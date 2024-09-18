@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { usePathname } from "next/navigation";
+import { headers } from "next/headers";
 import { cn } from "@/lib/utils";
 const inter = Inter({
   subsets: ["latin"],
@@ -18,8 +18,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  const isRootRoute = pathname === "/";
+  const heads = headers();
+  const isRootRoute = heads.get("next-url") === "/";
 
   return (
     <html lang="en">
