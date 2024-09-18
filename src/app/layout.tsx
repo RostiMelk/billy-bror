@@ -18,8 +18,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const heads = headers();
-  const isRootRoute = heads.get("next-url") === "/";
+  const headersList = headers();
+  const pathname = headersList.get("x-invoke-path") || "";
+  const isRootRoute = pathname === "/";
 
   return (
     <html lang="en">
