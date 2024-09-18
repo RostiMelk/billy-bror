@@ -20,6 +20,13 @@ export async function getAllCompletedEntries(): Promise<EntryDocument[]> {
   return serverClient.fetch(query);
 }
 
+export async function getAllEntriesThisWeek(): Promise<EntryDocument[]> {
+  const query = `*[_type == "entry" && status == "completed" && startTime > $weekAgo] | order(startTime desc)`;
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  return serverClient.fetch(query, { weekAgo });
+}
+
 export async function addManualEntry(entry: ManualEntry) {
   const validatedEntry = ManualEntry.safeParse(entry);
   if (!validatedEntry.success) {

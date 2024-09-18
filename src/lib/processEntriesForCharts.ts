@@ -65,7 +65,7 @@ export function processEntriesForTripsChart(entries: EntryDocument[]) {
 }
 
 /**
- * Process entries for success rate chart
+ * Process entries for stat cards
  */
 export function calculateStats(entries: EntryDocument[]): {
   totalTrips: number;
@@ -92,7 +92,18 @@ export function calculateStats(entries: EntryDocument[]): {
     };
   }
 
+  const outdoorTrips = entries.filter(
+    (entry) => entry.location === "outside" && entry.endTime,
+  );
+  const tripsWithToiletVisits = entries.filter(
+    (entry) => entry.poops || entry.pees,
+  );
+  const outdoorTripsWithToiletVisits = outdoorTrips.filter(
+    (entry) => entry.poops || entry.pees,
+  );
+
   const totalTrips = entries.length;
+  const totalOutsideTrips = outdoorTrips.length;
   const totalPoops = entries.reduce(
     (sum, entry) => sum + (entry.poops || 0),
     0,
@@ -104,7 +115,7 @@ export function calculateStats(entries: EntryDocument[]): {
       (entry) => new Date(entry.startTime).toISOString().split("T")[0],
     ),
   ).size;
-  const averageTripsPerDay = totalTrips / days;
+  const averageTripsPerDay = totalOutsideTrips / days;
 
   const locationCounts = entries.reduce(
     (acc, entry) => {
@@ -115,35 +126,25 @@ export function calculateStats(entries: EntryDocument[]): {
     {} as Record<Location, number>,
   );
 
-  const mostCommonLocationEntry = Object.entries(locationCounts).sort(
-    (a, b) => b[1] - a[1],
-  )[0];
-  const mostCommonLocation = mostCommonLocationEntry
-    ? mostCommonLocationEntry[0]
-    : "N/A";
+  const mostCommonLocation =
+    Object.entries(locationCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
 
   const longestTrip = entries.reduce((longest, entry) => {
     if (entry.endTime) {
       const duration =
         (new Date(entry.endTime).getTime() -
           new Date(entry.startTime).getTime()) /
-        60000; // in minutes
+        60000;
       return Math.max(longest, duration);
     }
     return longest;
   }, 0);
 
-  const successfulTrips = entries.filter(
-    (entry) => (entry.poops || 0) > 0 || (entry.pees || 0) > 0,
-  ).length;
-  const successRate = successfulTrips / totalTrips;
+  const successRate =
+    outdoorTripsWithToiletVisits.length / tripsWithToiletVisits.length;
+  const outdoorPercentage = totalOutsideTrips / totalTrips;
 
-  const outdoorTrips = entries.filter(
-    (entry) => entry.mode === "auto" || entry.location === "outside",
-  ).length;
-  const outdoorPercentage = outdoorTrips / totalTrips;
-
-  const totalDuration = entries.reduce((sum, entry) => {
+  const totalDuration = outdoorTrips.reduce((sum, entry) => {
     if (entry.endTime) {
       return (
         sum +
@@ -154,7 +155,7 @@ export function calculateStats(entries: EntryDocument[]): {
     }
     return sum;
   }, 0);
-  const averageTripDuration = totalDuration / totalTrips;
+  const averageTripDuration = totalDuration / totalOutsideTrips;
 
   return {
     totalTrips,

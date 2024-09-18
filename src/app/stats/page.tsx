@@ -1,7 +1,7 @@
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { getAllCompletedEntries } from "@/lib/actions";
+import { getAllCompletedEntries, getAllEntriesThisWeek } from "@/lib/actions";
 import { ChartPeePoo } from "@/components/chart-pee-poo";
 import { ChartTripsPerDay } from "@/components/chart-trips-per-day";
 import { StatCard } from "@/components/start-card";
@@ -12,11 +12,12 @@ import {
 } from "@/lib/processEntriesForCharts";
 
 export default async function Stats() {
-  const entries = (await getAllCompletedEntries()) || [];
+  const allEntries = await getAllCompletedEntries();
+  const thisWeeksEntries = await getAllEntriesThisWeek();
 
-  const stats = calculateStats(entries);
-  const poopPeeChartData = processEntriesForPoopPeeChart(entries);
-  const tripsChartData = processEntriesForTripsChart(entries);
+  const stats = calculateStats(thisWeeksEntries);
+  const poopPeeChartData = processEntriesForPoopPeeChart(allEntries);
+  const tripsChartData = processEntriesForTripsChart(allEntries);
 
   return (
     <>
@@ -27,6 +28,9 @@ export default async function Stats() {
       </Header>
 
       <main className="my-8">
+        <h2 className="text-lg text-center mb-2 font-semibold">
+          Statistikk for Billy siste 7 dager
+        </h2>
         <div className="grid grid-cols-2 mb-8">
           <StatCard title="Totalt antall turer" value={stats?.totalTrips} />
           <StatCard
@@ -50,19 +54,25 @@ export default async function Stats() {
             value={`${(stats?.successRate * 100).toFixed(1)}%`}
           />
           <StatCard
+            title="Gjør fra seg mest"
+            value={
+              stats?.mostCommonLocation === "outside" ? "Ute 🙂‍↕️" : "Inne 😭"
+            }
+          />
+          <StatCard
             title="Snitt varighet"
             value={`${stats?.averageTripDuration.toFixed(1)} minutter`}
           />
         </div>
 
-        <h2 className="text-lg text-center my-2 font-semibold mb-2">
+        <h2 className="text-lg text-center my-2 font-semibold">
           Tiss og bæsj over tid
         </h2>
         <div className="w-full mb-8">
           <ChartPeePoo chartData={poopPeeChartData} />
         </div>
 
-        <h2 className="text-lg text-center my-2 font-semibold mb-2">
+        <h2 className="text-lg text-center my-2 font-semibold">
           Turer per dag
         </h2>
         <div className="w-full">
