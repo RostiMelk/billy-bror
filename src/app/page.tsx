@@ -62,22 +62,23 @@ export default function Home() {
         client.fetch(ACTIVE_ENTRY_QUERY),
         client.fetch(ALL_ENTRIES),
       ]);
+
       setActiveEntry(activeEntry);
       setAllEntries(allEntries);
       setIsLoading(false);
-      return [activeEntry, allEntries];
-    };
 
-    const visibilityChangeHandler = async () => {
-      if (document.visibilityState !== "visible") return;
-      const [activeEntry] = await fetchEntries();
       const message = activeEntry
         ? "Håper du har hatt en fin tur!"
         : "Klar for ny tur? Velkommen tilbake!";
       const description = activeEntry
         ? "Trykk på stopp for å avslutte turen."
         : "Trykk på start for å begynne en ny tur.";
-      toast.info(message, { description, duration: 5000 });
+      toast(message, { description, duration: 5000 });
+    };
+
+    const visibilityChangeHandler = async () => {
+      if (document.visibilityState !== "visible") return;
+      fetchEntries();
     };
 
     setIsLoading(true);
