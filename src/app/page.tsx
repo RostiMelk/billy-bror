@@ -71,8 +71,8 @@ export default function Home() {
         ? "Håper du har hatt en fin tur!"
         : "Klar for ny tur? Velkommen tilbake!";
       const description = activeEntry
-        ? "Trykk på stopp for å avslutte turen."
-        : "Trykk på start for å begynne en ny tur.";
+        ? "Trykk på stopp for å avslutte turen"
+        : "Trykk på start for å begynne en ny tur";
       toast(message, { description });
     };
 
