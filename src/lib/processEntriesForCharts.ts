@@ -144,7 +144,7 @@ export function calculateStats(entries: EntryDocument[]): {
     outdoorTripsWithToiletVisits.length / tripsWithToiletVisits.length;
   const outdoorPercentage = totalOutsideTrips / totalTrips;
 
-  const totalDuration = outdoorTrips.reduce((sum, entry) => {
+  const totalOutsideTripDuration = outdoorTrips.reduce((sum, entry) => {
     if (entry.endTime) {
       return (
         sum +
@@ -155,7 +155,7 @@ export function calculateStats(entries: EntryDocument[]): {
     }
     return sum;
   }, 0);
-  const averageTripDuration = totalDuration / totalOutsideTrips;
+  const averageTripDuration = totalOutsideTripDuration / totalOutsideTrips;
 
   return {
     totalTrips,
