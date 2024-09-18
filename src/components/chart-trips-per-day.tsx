@@ -35,7 +35,7 @@ export function ChartTripsPerDay({ chartData }: { chartData: ChartData[] }) {
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" />
-          <YAxis />
+          <YAxis width={20} />
           <ChartTooltip content={<ChartTooltipContent />} />
           <Bar dataKey="trips" fill="var(--color-trips)" />
         </BarChart>
