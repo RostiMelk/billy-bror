@@ -82,7 +82,7 @@ export const SubmitDialog = ({
       endTime: formatTimeToDate(data.endTime),
       pees: data.pees,
       poops: data.poops,
-      location: entry ? undefined : data.location,
+      location: entry?.mode === "auto" ? "outside" : data.location,
     };
 
     if (entry) {

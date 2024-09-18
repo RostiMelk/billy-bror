@@ -28,6 +28,7 @@ export async function addManualEntry(entry: ManualEntry) {
   const newDocument: EntryDocument = {
     _id: randomUUID(),
     _type: "entry",
+    startTime: new Date().toISOString(),
     status: "completed",
     mode: "manual",
     ...validatedEntry.data,
