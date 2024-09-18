@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { UserMenu } from "@/components/user-menu";
 
 interface HeaderProps {
   children?: React.ReactNode;
@@ -13,7 +14,10 @@ export const Header = ({ children }: HeaderProps) => {
         </h2>
       </Link>
 
-      <nav className="flex items-center gap-3">{children}</nav>
+      <nav className="flex items-center gap-3">
+        {children}
+        <UserMenu />
+      </nav>
     </header>
   );
 };

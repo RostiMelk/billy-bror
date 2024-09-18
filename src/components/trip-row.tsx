@@ -42,15 +42,6 @@ const formatTime = (entry: EntryDocument) => {
   return `${formatDate(startDate)} - ${formatDate(endDate)}`;
 };
 
-const getFallback = (entry: EntryDocument) => {
-  if (entry.user?.name) {
-    const firstLetter = entry.user.name[0].toUpperCase();
-    const secondLetter = entry.user.name.split(" ")[1]?.[0].toUpperCase();
-    return `${firstLetter}${secondLetter}`;
-  }
-  return <CircleHelpIcon />;
-};
-
 export const TripRow = ({ entry, onEdit }: TripRowProps) => {
   const time = useMemo(() => formatTime(entry), [entry]);
 
@@ -65,7 +56,6 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
     >
       <Avatar className="mr-4">
         <AvatarImage src={entry.user?.image ?? undefined} />
-        <AvatarFallback>{getFallback(entry)}</AvatarFallback>
       </Avatar>
 
       <div className="text-left">
