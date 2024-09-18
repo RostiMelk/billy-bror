@@ -27,7 +27,7 @@ const motionProps = {
 
 type EntryEvent = MutationEvent<EntryDocument>;
 
-export function Tracker() {
+export default function Home() {
   const [activeEntry, setActiveEntry] = useState<EntryDocument | null>(null);
   const [editingEntry, setEditingEntry] = useState<EntryDocument | null>(null);
   const [allEntries, setAllEntries] = useState<EntryDocument[]>([]);

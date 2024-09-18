@@ -1,4 +1,5 @@
 import type { EntryDocument, Location } from "@/types/entry";
+import { User } from "@/types/user";
 
 const dateOptions: Intl.DateTimeFormatOptions = {
   year: "2-digit",
@@ -97,6 +98,7 @@ export function calculateStats(entries: EntryDocument[]): {
   successRate: number;
   outdoorPercentage: number;
   averageTripDuration: number;
+  topWalkers: Array<{ user: User; trips: number }>;
 } {
   if (entries.length === 0) {
     return {
@@ -109,6 +111,7 @@ export function calculateStats(entries: EntryDocument[]): {
       successRate: 0,
       outdoorPercentage: 0,
       averageTripDuration: 0,
+      topWalkers: [],
     };
   }
 
@@ -129,6 +132,7 @@ export function calculateStats(entries: EntryDocument[]): {
     0,
   );
   const totalPees = entries.reduce((sum, entry) => sum + (entry.pees || 0), 0);
+  const tripsWithWalkers = outdoorTrips.filter((entry) => entry.user);
 
   const days = new Set(
     entries.map(
@@ -177,6 +181,25 @@ export function calculateStats(entries: EntryDocument[]): {
   }, 0);
   const averageTripDuration = totalDuration / totalOutsideTrips;
 
+  // Sort walkers by number of trips
+  const topWalkers = Object.entries(
+    tripsWithWalkers.reduce(
+      (acc, entry) => {
+        if (entry.user) {
+          acc[entry.user.email] = {
+            user: entry.user,
+            trips: (acc[entry.user.email]?.trips || 0) + 1,
+          };
+        }
+        return acc;
+      },
+      {} as Record<string, { user: User; trips: number }>,
+    ),
+  )
+    .sort((a, b) => b[1].trips - a[1].trips)
+    .map(([, value]) => value)
+    .slice(0, 5); // Get top 5 walkers
+
   return {
     totalTrips: totalOutsideTrips,
     totalPoops,
@@ -187,5 +210,6 @@ export function calculateStats(entries: EntryDocument[]): {
     successRate,
     outdoorPercentage,
     averageTripDuration,
+    topWalkers,
   };
 }
