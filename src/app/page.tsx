@@ -166,7 +166,7 @@ export default function Home() {
           </AnimatePresence>
         </main>
 
-        <footer className="flex flex-col gap-3">
+        <footer className="flex flex-col gap-3 pb-safe">
           {activeEntry ? (
             <>
               <p className="text-muted-foreground font-medium">
