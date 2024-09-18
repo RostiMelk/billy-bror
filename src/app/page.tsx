@@ -14,6 +14,8 @@ import Link from "next/link";
 import { client } from "@/lib/sanity";
 import groq from "groq";
 import type { MutationEvent } from "@sanity/client";
+import { toast } from "sonner";
+
 const ACTIVE_ENTRY_QUERY = groq`*[_type == "entry" && status == "active" && mode == "auto"][0]`;
 const ALL_ENTRIES = groq`*[_type == "entry" && status == "completed"] | order(endTime desc)`;
 
@@ -63,11 +65,17 @@ export default function Home() {
       setActiveEntry(activeEntry);
       setAllEntries(allEntries);
       setIsLoading(false);
+      return [activeEntry, allEntries];
     };
 
-    const visibilityChangeHandler = () => {
+    const visibilityChangeHandler = async () => {
       if (document.visibilityState !== "visible") return;
-      fetchEntries();
+      const [activeEntry] = await fetchEntries();
+      toast(
+        activeEntry
+          ? "Håper du har hatt en fin tur!"
+          : "Klar for ny tur? Velkommen tilbake!",
+      );
     };
 
     setIsLoading(true);
