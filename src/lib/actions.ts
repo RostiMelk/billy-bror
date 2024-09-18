@@ -3,6 +3,7 @@
 import { serverClient } from "@/lib/sanity";
 import { type EntryDocument, AutoEntry, ManualEntry } from "@/types/entry";
 import { randomUUID } from "node:crypto";
+import { revalidatePath } from "next/cache";
 
 export async function getActiveEntry(): Promise<EntryDocument | null> {
   const query = `*[_type == "entry" && status == "active" && mode == "auto"][0]`;
@@ -35,6 +36,7 @@ export async function addManualEntry(entry: ManualEntry) {
   };
 
   await serverClient.create(newDocument);
+  revalidatePaths();
 }
 
 export async function startEntry() {
@@ -47,7 +49,9 @@ export async function startEntry() {
     location: "outside",
   };
 
-  return serverClient.create(newDocument);
+  await serverClient.create(newDocument);
+  revalidatePaths();
+  return newDocument;
 }
 
 export async function updateEntry(entryId: string, entry: AutoEntry) {
@@ -68,8 +72,15 @@ export async function updateEntry(entryId: string, entry: AutoEntry) {
   };
 
   await serverClient.createOrReplace(updatedEntry);
+  revalidatePaths();
 }
 
 export async function deleteEntry(entryId: string) {
   await serverClient.delete(entryId);
+  revalidatePaths();
+}
+
+function revalidatePaths() {
+  revalidatePath("/");
+  revalidatePath("/stats");
 }
