@@ -4,6 +4,7 @@ import { serverClient } from "@/lib/sanity";
 import { type EntryDocument, AutoEntry, ManualEntry } from "@/types/entry";
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth";
 
 export async function getActiveEntry(): Promise<EntryDocument | null> {
   const query = `*[_type == "entry" && status == "active" && mode == "auto"][0]`;
@@ -47,6 +48,12 @@ export async function addManualEntry(entry: ManualEntry) {
 }
 
 export async function startEntry() {
+  const session = await getServerSession();
+
+  if (!session?.user) {
+    throw new Error("User not authenticated");
+  }
+
   const newDocument: EntryDocument = {
     _id: randomUUID(),
     _type: "entry",
@@ -54,6 +61,7 @@ export async function startEntry() {
     status: "active",
     mode: "auto",
     location: "outside",
+    user: session?.user,
   };
 
   await serverClient.create(newDocument);

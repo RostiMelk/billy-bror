@@ -27,7 +27,7 @@ const motionProps = {
 
 type EntryEvent = MutationEvent<EntryDocument>;
 
-export default function Home() {
+export function Tracker() {
   const [activeEntry, setActiveEntry] = useState<EntryDocument | null>(null);
   const [editingEntry, setEditingEntry] = useState<EntryDocument | null>(null);
   const [allEntries, setAllEntries] = useState<EntryDocument[]>([]);
@@ -62,11 +62,16 @@ export default function Home() {
         client.fetch(ACTIVE_ENTRY_QUERY),
         client.fetch(ALL_ENTRIES),
       ]);
-
       setActiveEntry(activeEntry);
       setAllEntries(allEntries);
       setIsLoading(false);
 
+      return [activeEntry, allEntries];
+    };
+
+    const visibilityChangeHandler = async () => {
+      if (document.visibilityState !== "visible") return;
+      const [activeEntry] = await fetchEntries();
       const message = activeEntry
         ? "Håper du har hatt en fin tur!"
         : "Klar for ny tur? Velkommen tilbake!";
@@ -75,16 +80,6 @@ export default function Home() {
         : "Trykk på start for å begynne en ny tur";
       toast(message, { description });
     };
-
-    const visibilityChangeHandler = async () => {
-      if (document.visibilityState !== "visible") return;
-      fetchEntries();
-    };
-
-    setIsLoading(true);
-    fetchEntries();
-
-    window.addEventListener("visibilitychange", visibilityChangeHandler);
 
     const activeSubscription = client
       .listen(ACTIVE_ENTRY_QUERY, {}, { visibility: "query" })
@@ -124,10 +119,16 @@ export default function Home() {
         }
       });
 
+    setIsLoading(true);
+    fetchEntries();
+    window.addEventListener("visibilitychange", visibilityChangeHandler);
+    document.body.style.overflow = "hidden";
+
     return () => {
-      window.removeEventListener("visibilitychange", visibilityChangeHandler);
       activeSubscription.unsubscribe();
       latestSubscription.unsubscribe();
+      window.removeEventListener("visibilitychange", visibilityChangeHandler);
+      document.body.style.overflow = "auto";
     };
   }, []);
 

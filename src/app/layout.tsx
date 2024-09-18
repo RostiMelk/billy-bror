@@ -1,18 +1,8 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+"use client";
+
+import "@/app/globals.css";
 import { cn } from "@/lib/utils";
-import { Toaster } from "@/components/ui/sonner";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
-
-export const metadata: Metadata = {
-  title: "Billy Bror",
-  description: "A poop tracker for the modern age",
-};
+import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({
   children,
@@ -20,11 +10,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={cn(inter.variable, "antialiased")}>
-        <div className="container grid max-w-md">{children}</div>
-        <Toaster />
-      </body>
-    </html>
+    <SessionProvider>
+      <html lang="en">
+        <body className={cn("antialiased")}>{children}</body>
+      </html>
+    </SessionProvider>
   );
 }

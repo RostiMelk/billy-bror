@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { User } from "@/types/user";
 
 export const Status = z.enum(["active", "completed"]);
 export const Mode = z.enum(["auto", "manual"]);
@@ -14,6 +15,7 @@ export const EntryDocument = z.object({
   location: Location,
   poops: z.number().optional(),
   pees: z.number().optional(),
+  user: User.optional(),
 });
 
 export const AutoEntry = z.object({
