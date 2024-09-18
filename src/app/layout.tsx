@@ -20,7 +20,8 @@ export default function RootLayout({
 }>) {
   const headersList = headers();
   const pathname = headersList.get("x-invoke-path") || "";
-  const isRootRoute = pathname === "/";
+  console.log({ pathname });
+  const isRootRoute = pathname === "";
 
   return (
     <html lang="en">
