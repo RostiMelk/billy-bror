@@ -6,13 +6,22 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { NumberInput } from "@/components/ui/number-input";
 import { Input } from "@/components/ui/input";
 import { addManualEntry, deleteEntry, updateEntry } from "@/lib/actions";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { NumberInput } from "./ui/number-input";
 
 interface SubmitDialogProps {
   entry: EntryDocument | null;
@@ -21,6 +30,20 @@ interface SubmitDialogProps {
   onSubmit: () => void;
 }
 
+const formatTimeToHtmlInput = (date?: string) => {
+  return new Date(date || new Date()).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const formatTimeToDate = (time?: string) => {
+  const currentDate = new Date().toISOString().split("T")[0];
+  return new Date(`${currentDate}T${time}:00`).toISOString();
+};
+
+type FormValues = ManualEntry | AutoEntry;
+
 export const SubmitDialog = ({
   entry,
   open,
@@ -28,37 +51,44 @@ export const SubmitDialog = ({
   onSubmit,
 }: SubmitDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [location, setLocation] = useState("inside");
 
-  const formatTimeToHtmlInput = useCallback((date?: string) => {
-    return new Date(date || new Date()).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }, []);
+  const form = useForm<FormValues>({
+    defaultValues: {
+      location: "inside",
+      pees: 0,
+      poops: 0,
+      startTime: formatTimeToHtmlInput(),
+      endTime: formatTimeToHtmlInput(),
+    },
+  });
 
-  const formatTimeToDate = useCallback((time?: string) => {
-    const currentDate = new Date().toISOString().split("T")[0];
-    return new Date(`${currentDate}T${time}:00`).toISOString();
-  }, []);
+  useEffect(() => {
+    if (entry) {
+      form.reset({
+        location: entry.location || "inside",
+        pees: entry.pees || 0,
+        poops: entry.poops || 0,
+        startTime: formatTimeToHtmlInput(entry.startTime),
+        endTime: formatTimeToHtmlInput(entry.endTime),
+      });
+    }
+  }, [entry, form]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmitForm = async (data: FormValues) => {
     setIsLoading(true);
-    const formData = new FormData(e.currentTarget);
 
-    const data = {
-      startTime: formatTimeToDate(formData.get("startTime") as string),
-      endTime: formatTimeToDate(formData.get("endTime") as string),
-      poops: Number(formData.get("poops") || 0),
-      pees: Number(formData.get("pees") || 0),
-      location: entry ? undefined : location, // Only set location if it's a manual entry
+    const formattedData = {
+      startTime: formatTimeToDate(data.startTime),
+      endTime: formatTimeToDate(data.endTime),
+      pees: data.pees,
+      poops: data.poops,
+      location: entry ? undefined : data.location,
     };
 
     if (entry) {
-      await updateEntry(entry._id, data as AutoEntry);
+      await updateEntry(entry._id, formattedData as AutoEntry);
     } else {
-      await addManualEntry(data as ManualEntry);
+      await addManualEntry(formattedData as ManualEntry);
     }
 
     setIsLoading(false);
@@ -77,7 +107,7 @@ export const SubmitDialog = ({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        className="p-4 max-w-sm !w-[90dvw]"
+        className="p-4 max-w-sm !w-[90dvw] text-center"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader className="mb-1">
@@ -88,110 +118,130 @@ export const SubmitDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit}>
-          {!entry && (
-            <fieldset className="mb-4 flex flex-col gap-2 items-center">
-              <label htmlFor="location" className="text-sm font-medium">
-                Hvor var Billy?
-              </label>
-              <Tabs
-                defaultValue={location}
-                onValueChange={(value) => setLocation(value)}
-              >
-                <TabsList>
-                  <TabsTrigger value="inside">Inne</TabsTrigger>
-                  <TabsTrigger value="outside">Ute</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </fieldset>
-          )}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmitForm)}>
+            {!entry && (
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem className="mb-4">
+                    <FormLabel>Hvor var Billy?</FormLabel>
+                    <FormControl>
+                      <Tabs
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <TabsList>
+                          <TabsTrigger value="inside">Inne</TabsTrigger>
+                          <TabsTrigger value="outside">Ute</TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            )}
 
-          <div className="mb-4 flex flex-col gap-2 items-center">
-            <label htmlFor="pees" className="text-sm font-medium">
-              Hvor mange ganger tissa Billy?
-            </label>
-            <NumberInput
-              id="pees"
+            <FormField
+              control={form.control}
               name="pees"
-              required
-              min={0}
-              step={0.1}
-              defaultValue={entry?.pees || 0}
+              render={({ field }) => (
+                <FormItem className="mb-4">
+                  <FormLabel>Hvor mange ganger tissa Billy?</FormLabel>
+                  <FormControl>
+                    <NumberInput
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="mb-4 flex flex-col gap-2 items-center">
-            <label htmlFor="poops" className="text-sm font-medium">
-              Hvor mange ganger bæsja han?
-            </label>
-            <NumberInput
-              id="poops"
+            <FormField
+              control={form.control}
               name="poops"
-              required
-              min={0}
-              step={0.1}
-              defaultValue={entry?.pees || 0}
+              render={({ field }) => (
+                <FormItem className="mb-4">
+                  <FormLabel>Hvor mange ganger bæsja han?</FormLabel>
+                  <FormControl>
+                    <NumberInput
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <AnimatePresence initial={false}>
-            {(entry || location === "outside") && (
-              <motion.fieldset
-                className="grid gap-3 grid-cols-2"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.6, ease: "anticipate" }}
-              >
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="startTime" className="text-sm font-medium">
-                    Start tid
-                  </label>
-                  <Input
-                    id="startTime"
+            <AnimatePresence initial={false}>
+              {(entry || form.watch("location") === "outside") && (
+                <motion.fieldset
+                  className="grid gap-3 grid-cols-2"
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginBottom: 20 }}
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  transition={{ duration: 0.6, ease: "anticipate" }}
+                >
+                  <FormField
+                    control={form.control}
                     name="startTime"
-                    required
-                    type="time"
-                    defaultValue={formatTimeToHtmlInput(entry?.startTime)}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Start tid</FormLabel>
+                        <FormControl>
+                          <Input type="time" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
 
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="startTime" className="text-sm font-medium">
-                    Slutt tid
-                  </label>
-                  <Input
-                    id="endTime"
+                  <FormField
+                    control={form.control}
                     name="endTime"
-                    required
-                    type="time"
-                    defaultValue={formatTimeToHtmlInput(entry?.endTime)}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Slutt tid</FormLabel>
+                        <FormControl>
+                          <Input type="time" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-              </motion.fieldset>
-            )}
-          </AnimatePresence>
+                </motion.fieldset>
+              )}
+            </AnimatePresence>
 
-          <footer className="flex gap-2 bg-background relative z-10 mt-5">
-            {entry?.status === "completed" && (
-              <Button
-                type="button"
-                onClick={handleDelete}
-                variant="destructive"
-                className="w-full"
-                disabled={isLoading}
-              >
+            <footer className="flex gap-2 bg-background relative z-10">
+              {entry?.status === "completed" && (
+                <Button
+                  type="button"
+                  onClick={handleDelete}
+                  variant="destructive"
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Slett
+                </Button>
+              )}
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Slett
+                Lagre tur
               </Button>
-            )}
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Lagre tur
-            </Button>
-          </footer>
-        </form>
+            </footer>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

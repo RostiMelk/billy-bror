@@ -59,14 +59,19 @@ export default function Home() {
     });
 
     const activeSubscription = client
-      .listen<EntryEvent>(ACTIVE_ENTRY_QUERY, {}, { visibility: "query" })
+      .listen(ACTIVE_ENTRY_QUERY, {}, { visibility: "query" })
       .subscribe((update) => {
         if (update.type === "mutation" && update.eventId === "delete") {
           setActiveEntry(null);
           return;
         }
         if (update.type === "mutation" && update.result) {
-          setActiveEntry(update.result as unknown as EntryDocument);
+          const newEntry = update.result as unknown as EntryDocument;
+          if (newEntry.status === "completed") {
+            setActiveEntry(null);
+          } else {
+            setActiveEntry(newEntry);
+          }
         }
       });
 

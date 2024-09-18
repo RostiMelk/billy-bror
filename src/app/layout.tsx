@@ -19,10 +19,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.variable} grid antialiased min-h-[100dvh] container max-w-md mx-auto !p-4`}
-      >
-        {children}
+      <body className={`${inter.variable} antialiased`}>
+        <div className="container grid min-h-[100dvh] max-w-md p-4">
+          {children}
+        </div>
       </body>
     </html>
   );

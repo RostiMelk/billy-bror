@@ -7,7 +7,7 @@ export const Location = z.enum(["inside", "outside"]);
 export const EntryDocument = z.object({
   _id: z.string(),
   _type: z.literal("entry"),
-  startTime: z.string(),
+  startTime: z.string().optional(),
   endTime: z.string().optional(),
   status: Status,
   mode: Mode,
@@ -24,8 +24,8 @@ export const AutoEntry = z.object({
 });
 
 export const ManualEntry = z.object({
-  startTime: z.string(),
-  endTime: z.string(),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
   location: Location,
   poops: z.number(),
   pees: z.number(),
