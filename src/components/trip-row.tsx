@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { EditIcon, VenetianMask } from "lucide-react";
+import { EditIcon, CircleHelpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import type { EntryDocument } from "@/types/entry";
@@ -53,7 +53,7 @@ const getFallback = (entry: EntryDocument) => {
     const secondLetter = entry.user.name.split(" ")[1]?.[0].toUpperCase();
     return `${firstLetter}${secondLetter}`;
   }
-  return <VenetianMask />;
+  return <CircleHelpIcon />;
 };
 
 export const TripRow = ({ entry, onEdit }: TripRowProps) => {
