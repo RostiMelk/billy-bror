@@ -60,7 +60,7 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       screens: {
-        tall: { raw: "(min-height: 800px)" },
+        tall: { raw: "(min-height: 780px)" },
       },
     },
   },

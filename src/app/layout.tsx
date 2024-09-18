@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(inter.variable, "antialiased")}>
-        <div className="container grid min-h-[100dvh] max-w-md">{children}</div>
+        <div className="container grid max-w-md">{children}</div>
       </body>
     </html>
   );
