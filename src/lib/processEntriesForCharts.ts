@@ -178,7 +178,7 @@ export function calculateStats(entries: EntryDocument[]): {
   const averageTripDuration = totalDuration / totalOutsideTrips;
 
   return {
-    totalTrips,
+    totalTrips: totalOutsideTrips,
     totalPoops,
     totalPees,
     averageTripsPerDay,
