@@ -77,7 +77,7 @@ export default function Home() {
       const description = activeEntry
         ? "Trykk på stopp for å avslutte turen."
         : "Trykk på start for å begynne en ny tur.";
-      toast(message, { description });
+      toast.info(message, { description, duration: 3000 });
     };
 
     setIsLoading(true);
