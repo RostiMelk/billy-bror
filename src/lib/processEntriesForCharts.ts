@@ -1,5 +1,8 @@
 import type { EntryDocument, Location } from "@/types/entry";
 
+/**
+ * Process entries for poop and pee chart
+ */
 export function processEntriesForPoopPeeChart(entries: EntryDocument[]) {
   const dailyStats = entries.reduce(
     (acc, entry) => {
@@ -43,6 +46,9 @@ export function processEntriesForPoopPeeChart(entries: EntryDocument[]) {
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
+/**
+ * Process entries for trips chart
+ */
 export function processEntriesForTripsChart(entries: EntryDocument[]) {
   const dailyTrips = entries.reduce(
     (acc, entry) => {
@@ -58,6 +64,9 @@ export function processEntriesForTripsChart(entries: EntryDocument[]) {
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
+/**
+ * Process entries for success rate chart
+ */
 export function calculateStats(entries: EntryDocument[]): {
   totalTrips: number;
   totalPoops: number;

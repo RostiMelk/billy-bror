@@ -28,24 +28,30 @@ export default async function Stats() {
 
       <main className="my-8">
         <div className="grid grid-cols-2 mb-8">
-          <StatCard title="Total Trips" value={stats?.totalTrips} />
+          <StatCard title="Totalt antall turer" value={stats?.totalTrips} />
           <StatCard
-            title="Avg Trips/Day"
+            title="Snitt turer/dag"
             value={stats?.averageTripsPerDay.toFixed(1)}
           />
-          <StatCard title="Total Poops" value={stats?.totalPoops} />
-          <StatCard title="Total Pees" value={stats?.totalPees} />
           <StatCard
-            title="Longest Trip"
-            value={`${stats?.longestTrip} minutes`}
+            title="Billy har bæsja"
+            value={`${stats?.totalPoops} ganger`}
           />
           <StatCard
-            title="Success Rate"
+            title="Billy har tissa"
+            value={`${stats?.totalPees} ganger`}
+          />
+          <StatCard
+            title="Lengste tur"
+            value={`${stats?.longestTrip} minutter`}
+          />
+          <StatCard
+            title="Suksessrate"
             value={`${(stats?.successRate * 100).toFixed(1)}%`}
           />
           <StatCard
-            title="Avg Trip Duration"
-            value={`${stats?.averageTripDuration.toFixed(1)} minutes`}
+            title="Snitt varighet"
+            value={`${stats?.averageTripDuration.toFixed(1)} minutter`}
           />
         </div>
 

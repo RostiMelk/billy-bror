@@ -32,16 +32,23 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showSubmitDialog, setShowSubmitDialog] = useState<boolean>(false);
 
-  const handleOpenSubmit = useCallback(() => setShowSubmitDialog(true), []);
+  const handleAddManually = useCallback(() => {
+    setShowSubmitDialog(true);
+    setEditingEntry(null);
+  }, []);
+  const handleStopEntry = useCallback(() => {
+    setShowSubmitDialog(true);
+    setEditingEntry(null);
+  }, []);
   const handleEditEntry = useCallback((entry: EntryDocument) => {
     setShowSubmitDialog(true);
     setEditingEntry(entry);
   }, []);
-  const handleCloseSubmit = useCallback(() => {
+  const handleOnCloseSubmitDialog = useCallback(() => {
     setShowSubmitDialog(false);
     setEditingEntry(null);
   }, []);
-  const handleSubmitted = useCallback(() => {
+  const handleOnSubmit = useCallback(() => {
     setShowSubmitDialog(false);
     setActiveEntry(null);
     setEditingEntry(null);
@@ -138,7 +145,7 @@ export default function Home() {
               size="icon"
               title="Legg til manuelt"
               variant="secondary"
-              onClick={handleOpenSubmit}
+              onClick={handleAddManually}
             >
               <PlusIcon className="w-4 h-4" />
             </Button>
@@ -169,7 +176,7 @@ export default function Home() {
                 size="lg"
                 className="w-full"
                 variant="destructive"
-                onClick={handleOpenSubmit}
+                onClick={handleStopEntry}
               >
                 Avslutt turen
               </Button>
@@ -196,8 +203,8 @@ export default function Home() {
       <SubmitDialog
         entry={editingEntry || activeEntry}
         open={showSubmitDialog}
-        onClose={handleCloseSubmit}
-        onSubmit={handleSubmitted}
+        onClose={handleOnCloseSubmitDialog}
+        onSubmit={handleOnSubmit}
       />
     </>
   );
