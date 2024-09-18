@@ -55,15 +55,25 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
-    Promise.all([
-      client.fetch(ACTIVE_ENTRY_QUERY),
-      client.fetch(ALL_ENTRIES),
-    ]).then(([activeEntry, allEntries]) => {
+    const fetchEntries = async () => {
+      const [activeEntry, allEntries] = await Promise.all([
+        client.fetch(ACTIVE_ENTRY_QUERY),
+        client.fetch(ALL_ENTRIES),
+      ]);
       setActiveEntry(activeEntry);
       setAllEntries(allEntries);
       setIsLoading(false);
-    });
+    };
+
+    const visibilityChangeHandler = () => {
+      if (document.visibilityState !== "visible") return;
+      fetchEntries();
+    };
+
+    setIsLoading(true);
+    fetchEntries();
+
+    window.addEventListener("visibilitychange", visibilityChangeHandler);
 
     const activeSubscription = client
       .listen(ACTIVE_ENTRY_QUERY, {}, { visibility: "query" })
@@ -104,6 +114,7 @@ export default function Home() {
       });
 
     return () => {
+      window.removeEventListener("visibilitychange", visibilityChangeHandler);
       activeSubscription.unsubscribe();
       latestSubscription.unsubscribe();
     };
