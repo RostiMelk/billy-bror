@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -17,9 +18,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const isRootRoute = pathname === "/";
+
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased`}>
+      <body
+        className={cn(
+          inter.variable,
+          "antialiased",
+          isRootRoute && "overflow-hidden",
+        )}
+      >
         <div className="container grid min-h-[100dvh] max-w-md p-4">
           {children}
         </div>
