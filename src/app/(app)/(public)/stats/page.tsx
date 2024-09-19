@@ -34,7 +34,7 @@ export default async function Stats() {
           <h2 className="text-lg text-center mb-2 font-semibold">
             Topp turgåere denne uka 🏆
           </h2>
-          <div className="space-y-4">
+          <div className="space-y-2">
             {stats?.topWalkers.map((walker, index) => (
               <div
                 key={walker.user.email}
