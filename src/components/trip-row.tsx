@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { EditIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { ResolvedEntryDocument } from "@/types/entry";
 import { useTimeAgo } from "@/hooks/useTimeAgo";
 import { useDuration } from "@/hooks/useDuration";
@@ -27,6 +27,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
     >
       <Avatar className="mr-4">
         <AvatarImage src={entry.user?.image ?? undefined} />
+        <AvatarFallback>?</AvatarFallback>
       </Avatar>
 
       <div className="text-left">
