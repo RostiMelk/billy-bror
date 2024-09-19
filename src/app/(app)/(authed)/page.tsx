@@ -130,7 +130,7 @@ export default function Home() {
         <footer className="flex flex-col gap-3 pb-safe tall:pb-8">
           {activeEntry ? (
             <>
-              <p className="text-muted-foreground font-medium">
+              <p className="text-sm text-muted-foreground font-medium">
                 Billy på tur, aldri sur
               </p>
               <Button
@@ -144,7 +144,7 @@ export default function Home() {
             </>
           ) : (
             <>
-              <p className="text-muted-foreground font-medium">
+              <p className="text-sm text-muted-foreground font-medium">
                 Trykk på knappen for å starte en ny tur
               </p>
               <Button
