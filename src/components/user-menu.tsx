@@ -31,7 +31,7 @@ export const UserMenu = () => {
           className="mt-4 w-full"
           variant="outline"
         >
-          Logout
+          Logg ut
         </Button>
       </PopoverContent>
     </Popover>
