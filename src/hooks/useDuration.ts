@@ -17,8 +17,8 @@ export function useDuration(
       const diffInSeconds = Math.floor(
         (end.getTime() - start.getTime()) / 1000,
       );
-      const minutes = Math.floor((diffInSeconds % 3600) / 60);
-      setDuration(`${minutes} min`);
+      const totalMinutes = Math.floor(diffInSeconds / 60);
+      setDuration(`${totalMinutes} min`);
     };
 
     updateDuration();
