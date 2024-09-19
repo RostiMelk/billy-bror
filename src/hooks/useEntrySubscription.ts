@@ -4,7 +4,7 @@ import groq from "groq";
 import type { ResolvedEntryDocument } from "@/types/entry";
 import type { MutationEvent } from "@sanity/client";
 
-const ENTRY_PROJECTION = groq`{ ..., user-> }`;
+const ENTRY_PROJECTION = groq`{ ..., user->, likes[]-> }`;
 const ACTIVE_ENTRY_QUERY = groq`*[_type == "entry" && status == "active" && mode == "auto"][0]`;
 const ALL_ENTRIES = groq`*[_type == "entry" && status == "completed"] | order(endTime desc) ${ENTRY_PROJECTION}`;
 

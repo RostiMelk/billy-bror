@@ -5,6 +5,11 @@ export const Status = z.enum(["active", "completed"]);
 export const Mode = z.enum(["auto", "manual"]);
 export const Location = z.enum(["inside", "outside"]);
 
+export const UserReference = z.object({
+  _type: z.literal("reference"),
+  _ref: z.string().email(),
+});
+
 export const EntryDocument = z.object({
   _id: z.string(),
   _type: z.literal("entry"),
@@ -15,17 +20,14 @@ export const EntryDocument = z.object({
   location: Location,
   poops: z.number().optional(),
   pees: z.number().optional(),
-  user: z
-    .object({
-      _type: z.literal("reference"),
-      _ref: z.string().email(),
-    })
-    .optional(),
+  user: UserReference.optional(),
+  likes: z.array(UserReference).optional(),
 });
 
 export const ResolvedEntryDocument = EntryDocument.merge(
   z.object({
     user: User.optional(),
+    likes: z.array(User).optional(),
   }),
 );
 
@@ -45,6 +47,7 @@ export const ManualEntry = z.object({
   pees: z.number(),
 });
 
+export type UserReference = z.infer<typeof UserReference>;
 export type Status = z.infer<typeof Status>;
 export type Mode = z.infer<typeof Mode>;
 export type Location = z.infer<typeof Location>;

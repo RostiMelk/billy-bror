@@ -2,10 +2,11 @@
 
 import { serverClient } from "@/lib/server-client";
 import {
-  type EntryDocument,
   AutoEntry,
   ManualEntry,
-  ResolvedEntryDocument,
+  type UserReference,
+  type EntryDocument,
+  type ResolvedEntryDocument,
 } from "@/types/entry";
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
@@ -13,9 +14,9 @@ import { getServerSession } from "next-auth";
 import groq from "groq";
 import { hashEmail } from "./utils";
 
-const ENTRY_PROJECTION = groq`{ ..., user-> }`;
+const ENTRY_PROJECTION = groq`{ ..., user->, likes[]-> }`;
 
-async function getUserRef(): Promise<EntryDocument["user"]> {
+async function getUserRef(): Promise<UserReference> {
   const session = await getServerSession();
   if (!session?.user) {
     throw new Error("User not authenticated");
@@ -118,6 +119,33 @@ export async function updateEntry(entryId: string, entry: AutoEntry) {
 export async function deleteEntry(entryId: string) {
   await getUserRef();
   await serverClient.delete(entryId);
+  revalidatePaths();
+}
+
+export async function likeEntry(entryId: string) {
+  const userRef = await getUserRef();
+
+  const existingEntry = await serverClient.getDocument<EntryDocument>(entryId);
+  if (!existingEntry) {
+    throw new Error("Entry not found");
+  }
+
+  const likes = existingEntry.likes || [];
+  const userLiked = likes.some((like) => like._ref === userRef?._ref);
+
+  let updatedLikes: EntryDocument["likes"];
+  if (userLiked) {
+    updatedLikes = likes.filter((like) => like._ref !== userRef?._ref);
+  } else {
+    updatedLikes = [...likes, userRef];
+  }
+
+  const updatedEntry: EntryDocument = {
+    ...existingEntry,
+    likes: updatedLikes,
+  };
+
+  await serverClient.createOrReplace(updatedEntry);
   revalidatePaths();
 }
 
