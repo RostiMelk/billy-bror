@@ -12,3 +12,7 @@ export function pluralize(count: number, singular: string, plural: string) {
 export function hashEmail(email: string): string {
   return Buffer.from(email).toString("base64").replace(/[+/=]/g, "");
 }
+
+export function firstName(name: string): string {
+  return name.split(" ")[0];
+}

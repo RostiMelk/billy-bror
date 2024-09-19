@@ -7,8 +7,14 @@ import { useTimeAgo } from "@/hooks/useTimeAgo";
 import { useDuration } from "@/hooks/useDuration";
 import { likeEntry } from "@/lib/actions";
 import { useSession } from "next-auth/react";
-import { cn } from "@/lib/utils";
+import { cn, firstName } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface TripRowProps {
   entry: ResolvedEntryDocument;
@@ -72,30 +78,41 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
           <EditIcon className="w-4 h-4 text-muted-foreground" />
         </Button>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleLike}
-          className="gap-2 tabular-nums"
-        >
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={optimisticLikes.length}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.2 }}
-            >
-              {optimisticLikes.length}
-            </motion.span>
-          </AnimatePresence>
-          <HeartIcon
-            className={cn(
-              "w-4 h-4 text-muted-foreground",
-              isLiked && "text-red-500",
-            )}
-          />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLike}
+                className="gap-2 tabular-nums"
+              >
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={optimisticLikes.length}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {optimisticLikes.length}
+                  </motion.span>
+                </AnimatePresence>
+                <HeartIcon
+                  className={cn(
+                    "w-4 h-4 text-muted-foreground",
+                    isLiked && "text-red-500",
+                  )}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent sideOffset={8}>
+              <p className="text-xs">
+                {optimisticLikes.map((like) => firstName(like.name)).join(", ")}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );
