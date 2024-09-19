@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Billy Bror
 
-## Getting Started
+Billy Bror is a web application designed to track and manage dog walks, specifically for a dog named Billy. It provides features for logging walks, monitoring activity, and viewing statistics.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Start and stop dog walks
+- Real-time timer for active walks
+- Manual entry of walks
+- View all past trips
+- Comprehensive statistics dashboard
+- PWA support for mobile use
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Main Components
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Home Page (`/src/app/(app)/(authed)/page.tsx`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The home page serves as the main interface for the app. It includes:
 
-## Learn More
+- A start/stop button for walks
+- An active timer when a walk is in progress
+- A list of recent trips
+- Quick access to manually add entries and view statistics
 
-To learn more about Next.js, take a look at the following resources:
+### Statistics Page (`/src/app/(app)/(public)/stats/page.tsx`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The statistics page provides detailed insights into Billy's walking habits:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Top walkers of the week
+- Weekly statistics (total trips, average trips per day, etc.)
+- Charts showing pee and poop frequency over time
+- Daily trip count for the last 7 days
 
-## Deploy on Vercel
+## Technology Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Next.js: React framework for server-side rendering and routing
+- shadcn: UI component library for consistent and customizable design
+- Tailwind CSS: Utility-first CSS framework for styling
+- Sanity: Headless CMS for flexible and structured content management
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Development
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Configure Sanity:
+   - Set up a Sanity project and obtain API credentials
+   - Update the Sanity configuration in the project
+4. Run the development server: `npm run dev`
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
