@@ -15,8 +15,19 @@ export const EntryDocument = z.object({
   location: Location,
   poops: z.number().optional(),
   pees: z.number().optional(),
-  user: User.optional(),
+  user: z
+    .object({
+      _type: z.literal("reference"),
+      _ref: z.string().email(),
+    })
+    .optional(),
 });
+
+export const ResolvedEntryDocument = EntryDocument.merge(
+  z.object({
+    user: User.optional(),
+  }),
+);
 
 export const AutoEntry = z.object({
   startTime: z.string().optional(),
@@ -38,5 +49,6 @@ export type Status = z.infer<typeof Status>;
 export type Mode = z.infer<typeof Mode>;
 export type Location = z.infer<typeof Location>;
 export type EntryDocument = z.infer<typeof EntryDocument>;
+export type ResolvedEntryDocument = z.infer<typeof ResolvedEntryDocument>;
 export type AutoEntry = z.infer<typeof AutoEntry>;
 export type ManualEntry = z.infer<typeof ManualEntry>;

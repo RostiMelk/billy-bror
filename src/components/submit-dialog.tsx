@@ -1,4 +1,8 @@
-import type { ManualEntry, AutoEntry, EntryDocument } from "@/types/entry";
+import type {
+  ManualEntry,
+  AutoEntry,
+  ResolvedEntryDocument,
+} from "@/types/entry";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +28,7 @@ import {
 import { NumberInput } from "./ui/number-input";
 
 interface SubmitDialogProps {
-  entry: EntryDocument | null;
+  entry: ResolvedEntryDocument | null;
   open: boolean;
   onClose: () => void;
   onSubmit: () => void;

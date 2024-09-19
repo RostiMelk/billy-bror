@@ -1,7 +1,7 @@
 "use client";
 
 import { startEntry } from "@/lib/actions";
-import type { EntryDocument } from "@/types/entry";
+import type { ResolvedEntryDocument } from "@/types/entry";
 import { Button } from "@/components/ui/button";
 import { useCallback, useEffect, useState } from "react";
 import { SubmitDialog } from "@/components/submit-dialog";
@@ -11,13 +11,8 @@ import { PlusIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Header } from "@/components/header";
 import Link from "next/link";
-import { client } from "@/lib/sanity";
-import groq from "groq";
-import type { MutationEvent } from "@sanity/client";
 import { toast } from "sonner";
-
-const ACTIVE_ENTRY_QUERY = groq`*[_type == "entry" && status == "active" && mode == "auto"][0]`;
-const ALL_ENTRIES = groq`*[_type == "entry" && status == "completed"] | order(endTime desc)`;
+import { useEntrySubscription } from "@/hooks/useEntrySubscription";
 
 const motionProps = {
   initial: { opacity: 0, y: 20 },
@@ -25,13 +20,11 @@ const motionProps = {
   exit: { opacity: 0, y: -20 },
 };
 
-type EntryEvent = MutationEvent<EntryDocument>;
-
 export default function Home() {
-  const [activeEntry, setActiveEntry] = useState<EntryDocument | null>(null);
-  const [editingEntry, setEditingEntry] = useState<EntryDocument | null>(null);
-  const [allEntries, setAllEntries] = useState<EntryDocument[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { activeEntry, setActiveEntry, allEntries, isLoading } =
+    useEntrySubscription();
+  const [editingEntry, setEditingEntry] =
+    useState<ResolvedEntryDocument | null>(null);
   const [showSubmitDialog, setShowSubmitDialog] = useState<boolean>(false);
 
   const handleAddManually = useCallback(() => {
@@ -42,7 +35,7 @@ export default function Home() {
     setShowSubmitDialog(true);
     setEditingEntry(null);
   }, []);
-  const handleEditEntry = useCallback((entry: EntryDocument) => {
+  const handleEditEntry = useCallback((entry: ResolvedEntryDocument) => {
     setShowSubmitDialog(true);
     setEditingEntry(entry);
   }, []);
@@ -54,87 +47,32 @@ export default function Home() {
     setShowSubmitDialog(false);
     setActiveEntry(null);
     setEditingEntry(null);
-  }, []);
+  }, [setActiveEntry]);
 
   useEffect(() => {
-    const fetchEntries = async () => {
-      const [activeEntry, allEntries] = await Promise.all([
-        client.fetch(ACTIVE_ENTRY_QUERY),
-        client.fetch(ALL_ENTRIES),
-      ]);
-      setActiveEntry(activeEntry);
-      setAllEntries(allEntries);
-      setIsLoading(false);
-
-      return [activeEntry, allEntries];
-    };
-
     const visibilityChangeHandler = async () => {
       if (document.visibilityState !== "visible") return;
-      const [activeEntry] = await fetchEntries();
       const message = activeEntry
-        ? "Håper du har hatt en fin tur!"
-        : "Klar for ny tur? Velkommen tilbake!";
+        ? "Håper du har hatt en fin tur! 🐕‍🦺"
+        : "Klar for ny tur? Velkommen tilbake! 👋";
       const description = activeEntry
         ? "Trykk på stopp for å avslutte turen"
         : "Trykk på start for å begynne en ny tur";
       toast(message, { description });
     };
 
-    const activeSubscription = client
-      .listen(ACTIVE_ENTRY_QUERY, {}, { visibility: "query" })
-      .subscribe((update) => {
-        if (update.type === "mutation" && update.eventId === "delete") {
-          setActiveEntry(null);
-          return;
-        }
-        if (update.type === "mutation" && update.result) {
-          const newEntry = update.result as unknown as EntryDocument;
-          if (newEntry.status === "completed") {
-            setActiveEntry(null);
-          } else {
-            setActiveEntry(newEntry);
-          }
-        }
-      });
-
-    const latestSubscription = client
-      .listen<EntryEvent>(ALL_ENTRIES, {}, { visibility: "query" })
-      .subscribe((update) => {
-        if (update.type === "mutation" && update.transition === "disappear") {
-          setAllEntries((entries) =>
-            entries.filter((entry) => entry._id !== update.documentId),
-          );
-        } else if (update.type === "mutation") {
-          const entry = update.result;
-          if (entry) {
-            // @ts-ignore result is not null
-            setAllEntries((entries) => {
-              const index = entries.findIndex((prev) => prev._id === entry._id);
-              return index === -1
-                ? [entry, ...entries]
-                : entries.map((e, i) => (i === index ? entry : e));
-            });
-          }
-        }
-      });
-
-    setIsLoading(true);
-    fetchEntries();
     window.addEventListener("visibilitychange", visibilityChangeHandler);
     document.body.style.overflow = "hidden";
 
     return () => {
-      activeSubscription.unsubscribe();
-      latestSubscription.unsubscribe();
       window.removeEventListener("visibilitychange", visibilityChangeHandler);
       document.body.style.overflow = "auto";
     };
-  }, []);
+  }, [activeEntry]);
 
   const handleStartEntry = useCallback(async () => {
     const startTime = new Date().toISOString();
-    const tempEntry: EntryDocument = {
+    const tempEntry: ResolvedEntryDocument = {
       _id: "temp",
       _type: "entry",
       startTime,
@@ -146,12 +84,12 @@ export default function Home() {
 
     try {
       const newEntry = await startEntry();
-      setActiveEntry(newEntry);
+      setActiveEntry(newEntry as ResolvedEntryDocument);
     } catch (error) {
       console.error("Error starting entry:", error);
       setActiveEntry(null);
     }
-  }, []);
+  }, [setActiveEntry]);
 
   if (isLoading) return null;
 

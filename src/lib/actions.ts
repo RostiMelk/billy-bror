@@ -1,43 +1,64 @@
 "use server";
 
-import { serverClient } from "@/lib/sanity";
-import { type EntryDocument, AutoEntry, ManualEntry } from "@/types/entry";
+import { serverClient } from "@/lib/server-client";
+import {
+  type EntryDocument,
+  AutoEntry,
+  ManualEntry,
+  ResolvedEntryDocument,
+} from "@/types/entry";
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
+import groq from "groq";
+import { hashEmail } from "./utils";
 
-export async function getActiveEntry(): Promise<EntryDocument | null> {
-  const query = `*[_type == "entry" && status == "active" && mode == "auto"][0]`;
+const ENTRY_PROJECTION = groq`{ ..., user-> }`;
+
+async function getUserRef(): Promise<EntryDocument["user"]> {
+  const session = await getServerSession();
+  if (!session?.user) {
+    throw new Error("User not authenticated");
+  }
+  return {
+    _type: "reference",
+    _ref: hashEmail(session.user.email),
+  };
+}
+
+export async function getActiveEntry(): Promise<ResolvedEntryDocument | null> {
+  const query = groq`*[_type == "entry" && status == "active" && mode == "auto"][0] ${ENTRY_PROJECTION}`;
   return serverClient.fetch(query);
 }
 
-export async function getLatestOutsideEntry(): Promise<EntryDocument | null> {
-  const query = `*[_type == "entry" && location == "outside"] | order(startTime desc) [0]`;
+export async function getLatestOutsideEntry(): Promise<ResolvedEntryDocument | null> {
+  const query = groq`*[_type == "entry" && location == "outside"] | order(startTime desc) [0] ${ENTRY_PROJECTION}`;
   return serverClient.fetch(query);
 }
 
-export async function getAllCompletedEntries(): Promise<EntryDocument[]> {
-  const query = `*[_type == "entry" && status == "completed"] | order(startTime desc)`;
+export async function getAllCompletedEntries(): Promise<
+  ResolvedEntryDocument[]
+> {
+  const query = groq`*[_type == "entry" && status == "completed"] | order(startTime desc) ${ENTRY_PROJECTION}`;
   return serverClient.fetch(query);
 }
 
-export async function getAllEntriesThisWeek(): Promise<EntryDocument[]> {
-  const query = `*[_type == "entry" && status == "completed" && startTime > $weekAgo] | order(startTime desc)`;
+export async function getAllEntriesThisWeek(): Promise<
+  ResolvedEntryDocument[]
+> {
+  const query = groq`*[_type == "entry" && status == "completed" && startTime > $weekAgo] | order(startTime desc) ${ENTRY_PROJECTION}`;
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
   return serverClient.fetch(query, { weekAgo });
 }
 
 export async function addManualEntry(entry: ManualEntry) {
-  const session = await getServerSession();
-  if (!session?.user) {
-    throw new Error("User not authenticated");
-  }
-
   const validatedEntry = ManualEntry.safeParse(entry);
   if (!validatedEntry.success) {
     throw new Error("Invalid entry data");
   }
+
+  const userRef = await getUserRef();
 
   const newDocument: EntryDocument = {
     _id: randomUUID(),
@@ -45,8 +66,8 @@ export async function addManualEntry(entry: ManualEntry) {
     startTime: new Date().toISOString(),
     status: "completed",
     mode: "manual",
+    user: userRef,
     ...validatedEntry.data,
-    user: session?.user,
   };
 
   await serverClient.create(newDocument);
@@ -54,10 +75,7 @@ export async function addManualEntry(entry: ManualEntry) {
 }
 
 export async function startEntry() {
-  const session = await getServerSession();
-  if (!session?.user) {
-    throw new Error("User not authenticated");
-  }
+  const userRef = await getUserRef();
 
   const newDocument: EntryDocument = {
     _id: randomUUID(),
@@ -66,7 +84,7 @@ export async function startEntry() {
     status: "active",
     mode: "auto",
     location: "outside",
-    user: session?.user,
+    user: userRef,
   };
 
   await serverClient.create(newDocument);
@@ -75,10 +93,7 @@ export async function startEntry() {
 }
 
 export async function updateEntry(entryId: string, entry: AutoEntry) {
-  const session = await getServerSession();
-  if (!session?.user) {
-    throw new Error("User not authenticated");
-  }
+  await getUserRef();
 
   const validatedEntry = AutoEntry.safeParse(entry);
   if (!validatedEntry.success) {
@@ -101,11 +116,7 @@ export async function updateEntry(entryId: string, entry: AutoEntry) {
 }
 
 export async function deleteEntry(entryId: string) {
-  const session = await getServerSession();
-  if (!session?.user) {
-    throw new Error("User not authenticated");
-  }
-
+  await getUserRef();
   await serverClient.delete(entryId);
   revalidatePaths();
 }

@@ -1,5 +1,4 @@
 import { getServerSession } from "next-auth";
-import { SessionProvider } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 export default async function AuthedLayout({

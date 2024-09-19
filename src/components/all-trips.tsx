@@ -1,9 +1,9 @@
-import type { EntryDocument } from "@/types/entry";
+import type { ResolvedEntryDocument } from "@/types/entry";
 import { TripRow } from "./trip-row";
 
 interface AllTripsProps {
-  entries: EntryDocument[];
-  onEdit: (entry: EntryDocument) => void;
+  entries: ResolvedEntryDocument[];
+  onEdit: (entry: ResolvedEntryDocument) => void;
 }
 
 export const AllTrips = ({ entries, onEdit }: AllTripsProps) => {

@@ -1,49 +1,20 @@
 import { useCallback, useMemo } from "react";
-import { EditIcon, CircleHelpIcon } from "lucide-react";
+import { EditIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import type { EntryDocument } from "@/types/entry";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import type { ResolvedEntryDocument } from "@/types/entry";
+import { useTimeAgo } from "@/hooks/useTimeAgo";
+import { useDuration } from "@/hooks/useDuration";
 
 interface TripRowProps {
-  entry: EntryDocument;
-  onEdit: (entry: EntryDocument) => void;
+  entry: ResolvedEntryDocument;
+  onEdit: (entry: ResolvedEntryDocument) => void;
 }
 
-const formatTime = (entry: EntryDocument) => {
-  const startDate = new Date(entry.startTime as string);
-  const endDate = new Date(entry.endTime as string);
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("no-NO", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const formatDate = (date: Date) => {
-    if (date.toDateString() === today.toDateString()) {
-      return formatTime(date);
-    }
-    if (date.toDateString() === yesterday.toDateString()) {
-      return `i går, ${formatTime(date)}`;
-    }
-    return date.toLocaleDateString("no-NO", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  return `${formatDate(startDate)} - ${formatDate(endDate)}`;
-};
-
 export const TripRow = ({ entry, onEdit }: TripRowProps) => {
-  const time = useMemo(() => formatTime(entry), [entry]);
+  const timeAgo = useTimeAgo(entry.endTime ?? entry.startTime);
+  const duration = useDuration(entry.startTime, entry.endTime);
+  const isOutside = entry.location === "outside";
 
   const handleEdit = useCallback(() => {
     onEdit(entry);
@@ -59,7 +30,10 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
       </Avatar>
 
       <div className="text-left">
-        <p className="text-md font-medium">{time}</p>
+        <p className="text-md font-medium">
+          {timeAgo}
+          {isOutside && `, i ${duration}`}
+        </p>
         <p className="text-sm text-gray-500">
           {entry.pees} 💦 {entry.poops} 💩{" "}
           {entry.location === "inside" ? "🏠" : "🌳"}

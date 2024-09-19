@@ -5,8 +5,9 @@ import { defineType, defineField } from "sanity";
  * @see /types/user.ts
  */
 export const user = defineType({
-  type: "object",
+  type: "document",
   name: "user",
+  readOnly: true,
   fields: [
     defineField({
       name: "name",

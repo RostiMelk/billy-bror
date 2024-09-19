@@ -47,7 +47,8 @@ export const entry = defineType({
     }),
     defineField({
       name: "user",
-      type: "user",
+      type: "reference",
+      to: [{ type: "user" }],
     }),
   ],
   preview: {

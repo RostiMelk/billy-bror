@@ -10,7 +10,7 @@ import {
   processEntriesForPoopPeeChart,
   processEntriesForTripsChart,
   calculateStats,
-} from "@/lib/processEntriesForCharts";
+} from "@/lib/process-entries-for-charts";
 import { pluralize } from "@/lib/utils";
 
 export default async function Stats() {

@@ -1,5 +1,5 @@
-import type { EntryDocument, Location } from "@/types/entry";
-import { User } from "@/types/user";
+import type { ResolvedEntryDocument, Location } from "@/types/entry";
+import type { User } from "@/types/user";
 
 const dateOptions: Intl.DateTimeFormatOptions = {
   year: "2-digit",
@@ -10,7 +10,9 @@ const dateOptions: Intl.DateTimeFormatOptions = {
 /**
  * Process entries for poop and pee chart
  */
-export function processEntriesForPoopPeeChart(entries: EntryDocument[]) {
+export function processEntriesForPoopPeeChart(
+  entries: ResolvedEntryDocument[],
+) {
   const dailyStats = entries.reduce(
     (acc, entry) => {
       const date = new Date(entry.startTime).toLocaleDateString(
@@ -63,7 +65,7 @@ export function processEntriesForPoopPeeChart(entries: EntryDocument[]) {
 /**
  * Process entries for trips chart
  */
-export function processEntriesForTripsChart(entries: EntryDocument[]) {
+export function processEntriesForTripsChart(entries: ResolvedEntryDocument[]) {
   const dailyTrips = entries
     .filter((entry) => entry.location === "outside")
     .reduce(
@@ -90,7 +92,7 @@ export function processEntriesForTripsChart(entries: EntryDocument[]) {
 /**
  * Process entries for stat cards
  */
-export function calculateStats(entries: EntryDocument[]): {
+export function calculateStats(entries: ResolvedEntryDocument[]): {
   totalTrips: number;
   totalPoops: number;
   totalPees: number;

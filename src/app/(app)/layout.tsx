@@ -1,3 +1,4 @@
+import { EntryBanner } from "@/components/entry-banner";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,5 +11,10 @@ export default async function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="container grid max-w-md">{children}</div>;
+  return (
+    <>
+      <EntryBanner />
+      <div className="container grid max-w-md">{children}</div>
+    </>
+  );
 }

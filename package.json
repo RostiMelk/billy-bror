@@ -33,6 +33,7 @@
     "react-hook-form": "^7.53.0",
     "recharts": "^2.12.7",
     "sanity": "3",
+    "server-only": "^0.0.1",
     "sonner": "^1.5.0",
     "styled-components": "6",
     "tailwind-merge": "^2.5.2",
