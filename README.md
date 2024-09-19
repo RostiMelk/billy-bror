@@ -1,3 +1,5 @@
+![Billy Bror Banner](/public/billy-bror-banner.png)
+
 # Billy Bror
 
 Billy Bror is a web application designed to track and manage dog walks, specifically for a dog named Billy. It provides features for logging walks, monitoring activity, and viewing statistics.
