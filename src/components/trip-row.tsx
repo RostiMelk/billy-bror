@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
+import { useOptimistic } from "react";
 import { EditIcon, HeartIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,40 +27,45 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
   const duration = useDuration(entry.startTime, entry.endTime);
   const isOutside = entry.location === "outside";
   const { data: session } = useSession();
-  const [optimisticLikes, setOptimisticLikes] = useState(entry.likes || []);
-  const [optimisticIsLiked, setOptimisticIsLiked] = useState(false);
+
+  const [optimisticEntry, addOptimisticEntry] = useOptimistic(
+    entry,
+    (currentEntry, optimisticLike: boolean) => ({
+      ...currentEntry,
+      likes:
+        optimisticLike && session?.user
+          ? [...(currentEntry.likes || []), session.user]
+          : (currentEntry.likes || []).filter(
+              (like) => like.email !== session?.user?.email,
+            ),
+    }),
+  );
 
   const isLiked = useMemo(() => {
     const email = session?.user?.email;
     if (!email) return false;
-    return optimisticLikes.some((like) => like.email === email);
-  }, [optimisticLikes, session]);
+    return optimisticEntry.likes?.some((like) => like.email === email);
+  }, [optimisticEntry.likes, session]);
 
   const handleLike = useCallback(async () => {
     const user = session?.user;
     if (!user) return;
 
-    setOptimisticIsLiked((prev) => !prev);
-    setOptimisticLikes((prev) =>
-      optimisticIsLiked
-        ? prev.filter((like) => like.email !== user.email)
-        : [...prev, user],
-    );
-
+    addOptimisticEntry(!isLiked);
     await likeEntry(entry._id);
-  }, [entry, session, optimisticIsLiked]);
+  }, [entry._id, isLiked, session, addOptimisticEntry]);
 
   const handleEdit = useCallback(() => {
     onEdit(entry);
   }, [entry, onEdit]);
 
   return (
-    <div
-      className="w-full flex items-center py-3 pl-2 pr-1 first:pt-0 last:pb-0 border-b last:border-b-0"
+    <li
+      className="w-full flex items-center py-3 pl-2 pr-1 group-first:pt-0 group-last:pb-0 border-b group-last:border-b-0"
       onDoubleClick={handleEdit}
     >
       <Avatar className="mr-4">
-        <AvatarImage src={entry.user?.image ?? undefined} />
+        <AvatarImage src={optimisticEntry.user?.image ?? undefined} />
         <AvatarFallback>?</AvatarFallback>
       </Avatar>
 
@@ -69,8 +75,8 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
           {isOutside && `, i ${duration}`}
         </p>
         <p className="text-sm text-muted-foreground truncate">
-          {entry.pees} 💦 {entry.poops} 💩{" "}
-          {entry.location === "inside" ? "🏠" : "🌳"}
+          {optimisticEntry.pees} 💦 {optimisticEntry.poops} 💩{" "}
+          {optimisticEntry.location === "inside" ? "🏠" : "🌳"}
         </p>
       </div>
       <div className="ml-auto flex gap-1">
@@ -79,7 +85,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
         </Button>
 
         <TooltipProvider>
-          <Tooltip delayDuration={optimisticLikes?.length ? 200 : 1e9}>
+          <Tooltip delayDuration={optimisticEntry.likes?.length ? 200 : 1e9}>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
@@ -89,13 +95,13 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
               >
                 <AnimatePresence mode="wait">
                   <motion.span
-                    key={optimisticLikes.length}
+                    key={optimisticEntry.likes?.length}
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.2 }}
                   >
-                    {optimisticLikes.length}
+                    {optimisticEntry.likes?.length}
                   </motion.span>
                 </AnimatePresence>
                 <HeartIcon
@@ -108,12 +114,14 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
             </TooltipTrigger>
             <TooltipContent sideOffset={8}>
               <p className="text-xs">
-                {optimisticLikes.map((like) => firstName(like.name)).join(", ")}
+                {optimisticEntry.likes
+                  ?.map((like) => firstName(like.name))
+                  .join(", ")}
               </p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
-    </div>
+    </li>
   );
 };
