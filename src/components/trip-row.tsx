@@ -55,7 +55,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
 
   return (
     <div
-      className="flex items-center py-3 pl-2 pr-1 border-b last:border-b-0 w-full first:pt-0 last:pb-0"
+      className="w-full flex items-center py-3 pl-2 pr-1 first:pt-0 last:pb-0 border-b last:border-b-0"
       onDoubleClick={handleEdit}
     >
       <Avatar className="mr-4">
