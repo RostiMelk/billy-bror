@@ -13,6 +13,8 @@ import { Header } from "@/components/header";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useEntrySubscription } from "@/hooks/useEntrySubscription";
+import { useIsPwa } from "@/hooks/useIsPwa";
+import { cn } from "@/lib/utils";
 
 const motionProps = {
   initial: { opacity: 0, y: 20 },
@@ -26,6 +28,7 @@ export default function Home() {
   const [editingEntry, setEditingEntry] =
     useState<ResolvedEntryDocument | null>(null);
   const [showSubmitDialog, setShowSubmitDialog] = useState<boolean>(false);
+  const isPwa = useIsPwa();
 
   const handleAddManually = useCallback(() => {
     setShowSubmitDialog(true);
@@ -127,7 +130,11 @@ export default function Home() {
           </AnimatePresence>
         </main>
 
-        <footer className="flex flex-col gap-3 pb-safe tall:pb-8">
+        <footer
+          className={cn("flex flex-col gap-3 pb-safe", {
+            "pb-9": isPwa,
+          })}
+        >
           {activeEntry ? (
             <>
               <p className="text-sm text-muted-foreground font-medium">

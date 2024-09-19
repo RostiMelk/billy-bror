@@ -59,11 +59,8 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      screens: {
-        tall: { raw: "(min-height: 780px)" },
-      },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("tailwindcss-safe-area")],
+  plugins: [require("tailwindcss-animate")],
 };
 export default config;
