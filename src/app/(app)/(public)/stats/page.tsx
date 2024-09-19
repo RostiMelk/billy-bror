@@ -31,7 +31,7 @@ export default async function Stats() {
       <main className="my-8">
         <section className="mb-8">
           <h2 className="text-lg text-center mb-2 font-semibold">
-            Topp turledere denne uka 🏆
+            Topp turgåere denne uka 🏆
           </h2>
           <div className="space-y-4">
             {stats?.topWalkers.map((walker, index) => (
