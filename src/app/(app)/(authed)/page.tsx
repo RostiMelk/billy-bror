@@ -131,8 +131,8 @@ export default function Home() {
         </main>
 
         <footer
-          className={cn("flex flex-col gap-3 pb-safe", {
-            "pb-9": isPwa,
+          className={cn("flex flex-col gap-3", {
+            "pb-6": isPwa,
           })}
         >
           {activeEntry ? (
