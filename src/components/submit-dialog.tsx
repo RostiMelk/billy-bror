@@ -67,15 +67,13 @@ export const SubmitDialog = ({
   });
 
   useEffect(() => {
-    if (entry) {
-      form.reset({
-        location: entry.location || "inside",
-        pees: entry.pees || 0,
-        poops: entry.poops || 0,
-        startTime: formatTimeToHtmlInput(entry.startTime),
-        endTime: formatTimeToHtmlInput(entry.endTime),
-      });
-    }
+    form.reset({
+      location: entry?.location || "inside",
+      pees: entry?.pees || 0,
+      poops: entry?.poops || 0,
+      startTime: formatTimeToHtmlInput(entry?.startTime),
+      endTime: formatTimeToHtmlInput(entry?.endTime),
+    });
   }, [entry, form]);
 
   const onSubmitForm = async (data: FormValues) => {
