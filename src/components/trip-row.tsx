@@ -79,7 +79,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
         </Button>
 
         <TooltipProvider>
-          <Tooltip>
+          <Tooltip delayDuration={optimisticLikes?.length ? 200 : 1e9}>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
