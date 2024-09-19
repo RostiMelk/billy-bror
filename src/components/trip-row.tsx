@@ -101,7 +101,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
                 <HeartIcon
                   className={cn(
                     "w-4 h-4 text-muted-foreground",
-                    isLiked && "text-red-500",
+                    isLiked && "text-red-500 fill-red-500",
                   )}
                 />
               </Button>
