@@ -35,9 +35,9 @@ export default async function Stats() {
             Topp turgåere denne uka 🏆
           </h2>
 
-          <div>
+          <ul>
             {stats?.topWalkers.map((walker, index) => (
-              <div
+              <li
                 key={walker.user.email}
                 className="flex items-center p-3 border-b last:border-b-0"
               >
@@ -53,9 +53,9 @@ export default async function Stats() {
                 <span className="text-sm font-semibold text-secondary-foreground ml-auto">
                   {walker.trips} {pluralize(walker.trips, "tur", "turer")}
                 </span>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
 
         <section className="mb-8">
