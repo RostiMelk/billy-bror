@@ -15,7 +15,7 @@ export const EntryBanner = () => {
 
   return (
     <header className="bg-green-400 text-sm dark:bg-green-600">
-      <div className="container max-w-md flex justify-between py-2 px-4">
+      <div className="container max-w-xl flex justify-between py-2 px-4">
         <p className="font-medium text-center">Du er på tur!</p>
         <p className="font-medium tabular-nums">{elapsedTime}</p>
       </div>

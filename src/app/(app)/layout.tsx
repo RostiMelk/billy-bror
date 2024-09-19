@@ -14,7 +14,7 @@ export default async function AppLayout({
   return (
     <>
       <EntryBanner />
-      <div className="container grid max-w-md">{children}</div>
+      <div className="container grid max-w-xl">{children}</div>
     </>
   );
 }
