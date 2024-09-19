@@ -49,7 +49,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
 
   return (
     <div
-      className="flex items-center p-3 border-b last:border-b-0"
+      className="flex items-center py-3 pl-2 pr-1 border-b last:border-b-0"
       onDoubleClick={handleEdit}
     >
       <Avatar className="mr-4">
@@ -58,11 +58,11 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
       </Avatar>
 
       <div className="text-left">
-        <p className="text-md font-medium">
+        <p className="text-md font-medium truncate">
           {timeAgo}
           {isOutside && `, i ${duration}`}
         </p>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 truncate">
           {entry.pees} 💦 {entry.poops} 💩{" "}
           {entry.location === "inside" ? "🏠" : "🌳"}
         </p>
