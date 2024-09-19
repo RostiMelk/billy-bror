@@ -101,7 +101,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.2 }}
                   >
-                    {optimisticEntry.likes?.length}
+                    {optimisticEntry.likes?.length || "0"}
                   </motion.span>
                 </AnimatePresence>
                 <HeartIcon
