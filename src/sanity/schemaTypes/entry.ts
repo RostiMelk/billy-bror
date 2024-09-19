@@ -20,21 +20,21 @@ export const entry = defineType({
       name: "status",
       type: "string",
       options: {
-        list: ["active", "completed", "cancelled"],
+        list: ["active", "completed"],
       },
     }),
     defineField({
       name: "mode",
       type: "string",
       options: {
-        list: ["walk", "play", "training"],
+        list: ["auto", "manual"],
       },
     }),
     defineField({
       name: "location",
       type: "string",
       options: {
-        list: ["indoor", "outdoor"],
+        list: ["inside", "outside"],
       },
     }),
     defineField({
@@ -50,6 +50,18 @@ export const entry = defineType({
       type: "reference",
       to: [{ type: "user" }],
     }),
+  ],
+  orderings: [
+    {
+      title: "Start Time Asc",
+      name: "startTimeAsc",
+      by: [{ field: "startTime", direction: "desc" }],
+    },
+    {
+      title: "Start Time Desc",
+      name: "startTimeDesc",
+      by: [{ field: "startTime", direction: "asc" }],
+    },
   ],
   preview: {
     select: {
