@@ -64,11 +64,11 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
       </Avatar>
 
       <div className="text-left">
-        <p className="text-md font-medium truncate">
+        <p className="text-sm font-medium truncate">
           {timeAgo}
           {isOutside && `, i ${duration}`}
         </p>
-        <p className="text-sm text-gray-500 truncate">
+        <p className="text-sm text-muted-foreground truncate">
           {entry.pees} 💦 {entry.poops} 💩{" "}
           {entry.location === "inside" ? "🏠" : "🌳"}
         </p>
