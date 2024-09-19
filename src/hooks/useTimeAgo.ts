@@ -24,9 +24,13 @@ export function useTimeAgo(date: string | number | Date): string {
           setTimeAgo(`${hours} ${pluralize(hours, "time", "timer")} siden`);
           break;
         }
+        case diffInSeconds < 172800: {
+          setTimeAgo("I går");
+          break;
+        }
         case diffInSeconds < 2592000: {
           const days = Math.floor(diffInSeconds / 86400);
-          setTimeAgo(`${days} ${pluralize(days, "dag", "dager")} siden`);
+          setTimeAgo(`${days} dager siden`);
           break;
         }
         case diffInSeconds < 31536000: {
