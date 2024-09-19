@@ -29,6 +29,11 @@ export async function getAllEntriesThisWeek(): Promise<EntryDocument[]> {
 }
 
 export async function addManualEntry(entry: ManualEntry) {
+  const session = await getServerSession();
+  if (!session?.user) {
+    throw new Error("User not authenticated");
+  }
+
   const validatedEntry = ManualEntry.safeParse(entry);
   if (!validatedEntry.success) {
     throw new Error("Invalid entry data");
@@ -41,6 +46,7 @@ export async function addManualEntry(entry: ManualEntry) {
     status: "completed",
     mode: "manual",
     ...validatedEntry.data,
+    user: session?.user,
   };
 
   await serverClient.create(newDocument);
@@ -49,7 +55,6 @@ export async function addManualEntry(entry: ManualEntry) {
 
 export async function startEntry() {
   const session = await getServerSession();
-
   if (!session?.user) {
     throw new Error("User not authenticated");
   }
@@ -70,6 +75,11 @@ export async function startEntry() {
 }
 
 export async function updateEntry(entryId: string, entry: AutoEntry) {
+  const session = await getServerSession();
+  if (!session?.user) {
+    throw new Error("User not authenticated");
+  }
+
   const validatedEntry = AutoEntry.safeParse(entry);
   if (!validatedEntry.success) {
     throw new Error("Invalid entry data");
@@ -91,6 +101,11 @@ export async function updateEntry(entryId: string, entry: AutoEntry) {
 }
 
 export async function deleteEntry(entryId: string) {
+  const session = await getServerSession();
+  if (!session?.user) {
+    throw new Error("User not authenticated");
+  }
+
   await serverClient.delete(entryId);
   revalidatePaths();
 }
