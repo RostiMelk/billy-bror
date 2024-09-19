@@ -64,17 +64,19 @@ export function processEntriesForPoopPeeChart(entries: EntryDocument[]) {
  * Process entries for trips chart
  */
 export function processEntriesForTripsChart(entries: EntryDocument[]) {
-  const dailyTrips = entries.reduce(
-    (acc, entry) => {
-      const date = new Date(entry.startTime).toLocaleDateString(
-        "no-NO",
-        dateOptions,
-      );
-      acc[date] = (acc[date] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+  const dailyTrips = entries
+    .filter((entry) => entry.location === "outside")
+    .reduce(
+      (acc, entry) => {
+        const date = new Date(entry.startTime).toLocaleDateString(
+          "no-NO",
+          dateOptions,
+        );
+        acc[date] = (acc[date] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
   return Object.entries(dailyTrips)
     .map(([date, trips]) => ({ date, trips }))
