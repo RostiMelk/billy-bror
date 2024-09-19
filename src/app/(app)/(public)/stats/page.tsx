@@ -11,6 +11,7 @@ import {
   processEntriesForTripsChart,
   calculateStats,
 } from "@/lib/processEntriesForCharts";
+import { pluralize } from "@/lib/utils";
 
 export default async function Stats() {
   const allEntries = await getAllCompletedEntries();
@@ -49,7 +50,7 @@ export default async function Stats() {
                 <p className="font-medium truncate">{walker.user.name}</p>
 
                 <span className="text-sm font-semibold text-secondary-foreground ml-auto">
-                  {walker.trips} turer
+                  {walker.trips} {pluralize(walker.trips, "tur", "turer")}
                 </span>
               </div>
             ))}
