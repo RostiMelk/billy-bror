@@ -34,11 +34,12 @@ export default async function Stats() {
           <h2 className="text-lg text-center mb-2 font-semibold">
             Topp turgåere denne uka 🏆
           </h2>
-          <div className="space-y-2">
+
+          <div>
             {stats?.topWalkers.map((walker, index) => (
               <div
                 key={walker.user.email}
-                className="flex items-center p-2 border-b last:border-b-0"
+                className="flex items-center p-3 border-b last:border-b-0"
               >
                 <span className="text-sm font-semibold text-secondary-foreground mr-4">
                   {index + 1}
