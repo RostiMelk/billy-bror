@@ -1,3 +1,4 @@
+import { pluralize } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 export function useDuration(
@@ -17,13 +18,8 @@ export function useDuration(
       const diffInSeconds = Math.floor(
         (end.getTime() - start.getTime()) / 1000,
       );
-
-      const hours = Math.floor(diffInSeconds / 3600);
       const minutes = Math.floor((diffInSeconds % 3600) / 60);
-
-      setDuration(
-        hours > 0 ? `${hours} timer og ${minutes} min` : `${minutes} min`,
-      );
+      setDuration(`${minutes} min`);
     };
 
     updateDuration();
