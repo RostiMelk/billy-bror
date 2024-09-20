@@ -41,7 +41,6 @@ import {
   AlertDialogFooter,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { cn } from "@/lib/utils";
 
 interface SubmitDialogProps {
   entry: ResolvedEntryDocument | null;
@@ -81,7 +80,8 @@ export const SubmitDialog = ({
   const allUserOptions = useMemo(() => {
     return (
       allUsers?.map((user) => ({
-        label: firstName(user.name),
+        label: user.name,
+        shortLabel: firstName(user.name),
         value: hashEmail(user.email),
         icon: (props: AvatarProps) => (
           <Avatar {...props}>

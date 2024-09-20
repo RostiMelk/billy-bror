@@ -53,6 +53,8 @@ interface MultiSelectProps
   options: {
     /** The text to display for the option. */
     label: string;
+    /** Displayed within the Pill component, if available */
+    shortLabel?: string;
     /** The unique value associated with the option. */
     value: string;
     /** Optional icon component to display alongside the option. */
@@ -194,7 +196,7 @@ export const MultiSelect = React.forwardRef<
                         {IconComponent && (
                           <IconComponent className="size-5 mr-1.5" />
                         )}
-                        {option?.label}
+                        {option?.shortLabel || option?.label}
                         <Button
                           className="ml-2 size-5 cursor-pointer bg-background text-muted-foreground rounded-full"
                           size="icon"
@@ -268,16 +270,16 @@ export const MultiSelect = React.forwardRef<
                     >
                       <div
                         className={cn(
-                          "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                          "mr-2 flex size-4 items-center justify-center rounded-sm border border-primary",
                           isSelected
                             ? "bg-primary text-primary-foreground"
                             : "opacity-50 [&_svg]:invisible",
                         )}
                       >
-                        <CheckIcon className="h-4 w-4" />
+                        <CheckIcon className="size-4" />
                       </div>
                       {option.icon && (
-                        <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                        <option.icon className="mr-1.5 size-5 text-muted-foreground" />
                       )}
                       <span>{option.label}</span>
                     </CommandItem>
