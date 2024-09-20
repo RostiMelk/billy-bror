@@ -328,9 +328,7 @@ export const SubmitDialog = ({
                     Slett
                   </AlertDialogTrigger>
                   <AlertDialogContent className="max-w-xs">
-                    <AlertDialogHeader>
-                      Er du sikker på at du vil slette turen?
-                    </AlertDialogHeader>
+                    <AlertDialogHeader>Vil du slette turen?</AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Avbryt</AlertDialogCancel>
                       <AlertDialogAction
