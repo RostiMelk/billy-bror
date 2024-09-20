@@ -215,7 +215,7 @@ export const SubmitDialog = ({
             />
 
             <AnimatePresence initial={false}>
-              {(entry || form.watch("location") === "outside") && (
+              {form.watch("location") === "outside" && (
                 <motion.fieldset
                   className="grid gap-3 grid-cols-2"
                   initial={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -255,7 +255,7 @@ export const SubmitDialog = ({
             </AnimatePresence>
 
             <AnimatePresence initial={false}>
-              {(entry || form.watch("location") === "outside") && (
+              {form.watch("location") === "outside" && (
                 <motion.div
                   initial={{ opacity: 0, height: 0, marginBottom: 0 }}
                   animate={{ opacity: 1, height: "auto", marginBottom: 20 }}
