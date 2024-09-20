@@ -30,6 +30,8 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { useClient } from "@/hooks/useClient";
 import type { User } from "@/types/user";
 import { firstName, hashEmail } from "@/lib/utils";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import type { AvatarProps } from "@radix-ui/react-avatar";
 
 interface SubmitDialogProps {
   entry: ResolvedEntryDocument | null;
@@ -70,6 +72,11 @@ export const SubmitDialog = ({
       allUsers?.map((user) => ({
         label: firstName(user.name),
         value: hashEmail(user.email),
+        icon: (props: AvatarProps) => (
+          <Avatar {...props}>
+            <AvatarImage src={user.image || undefined} />
+          </Avatar>
+        ),
       })) || []
     );
   }, [allUsers]);
