@@ -98,7 +98,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="text-center grid grid-rows-[auto,1fr,auto] h-[100dvh] p-4">
+      <div className="text-center grid grid-rows-[auto,1fr,auto] h-[100dvh] p-4 gap-6">
         <Header>
           <Button variant="outline" size="sm" asChild>
             <Link href="/stats">Statistikk</Link>

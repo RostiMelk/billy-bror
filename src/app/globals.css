@@ -90,14 +90,17 @@ body {
     @apply bg-background text-foreground;
   }
   .fade {
-    @apply relative my-8;
-    &::before {
-      content: "";
-      @apply block bg-gradient-to-b from-background to-transparent pointer-events-none sticky left-0 right-0 top-0 h-8 z-10;
-    }
+    @apply relative;
+    &::before,
     &::after {
       content: "";
-      @apply block bg-gradient-to-t from-background to-transparent pointer-events-none sticky left-0 right-0 bottom-0 h-8 z-10;
+      @apply block bg-gradient-to-b from-background to-transparent pointer-events-none sticky left-0 right-0 h-12 z-10;
+    }
+    &::before {
+      @apply top-0;
+    }
+    &::after {
+      @apply bottom-0 rotate-180;
     }
   }
 }
