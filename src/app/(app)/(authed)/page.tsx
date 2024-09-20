@@ -86,7 +86,7 @@ export default function Home() {
     setActiveEntry(tempEntry);
 
     try {
-      const newEntry = await startEntry();
+      const newEntry = await startEntry(startTime);
       setActiveEntry(newEntry as ResolvedEntryDocument);
     } catch (error) {
       console.error("Error starting entry:", error);

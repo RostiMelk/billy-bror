@@ -75,13 +75,13 @@ export async function addManualEntry(entry: ManualEntry) {
   revalidatePaths();
 }
 
-export async function startEntry() {
+export async function startEntry(isoStartTime: string) {
   const userRef = await getUserRef();
 
   const newDocument: EntryDocument = {
     _id: randomUUID(),
     _type: "entry",
-    startTime: new Date().toISOString(),
+    startTime: isoStartTime,
     status: "active",
     mode: "auto",
     location: "outside",
