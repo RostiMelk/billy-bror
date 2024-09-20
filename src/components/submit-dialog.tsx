@@ -263,9 +263,9 @@ export const SubmitDialog = ({
                 {isOutside && (
                   <motion.div
                     key="endTime"
-                    initial={{ opacity: 0, x: -80 }}
+                    initial={{ opacity: 0, x: "-100%" }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -80 }}
+                    exit={{ opacity: 0, x: "-100%" }}
                   >
                     <FormField
                       control={form.control}
