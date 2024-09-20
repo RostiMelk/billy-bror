@@ -29,7 +29,7 @@ import { NumberInput } from "@/components/ui/number-input";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useClient } from "@/hooks/useClient";
 import type { User } from "@/types/user";
-import { firstName, hashEmail } from "@/lib/utils";
+import { cn, firstName, hashEmail } from "@/lib/utils";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import type { AvatarProps } from "@radix-ui/react-avatar";
 import {
@@ -65,6 +65,8 @@ const formatTimeToDate = (time?: string, date?: string) => {
 
 type FormValues = ManualEntry | AutoEntry;
 
+const MotionFormItem = motion(FormItem);
+
 export const SubmitDialog = ({
   entry,
   open,
@@ -72,6 +74,19 @@ export const SubmitDialog = ({
   onSubmit,
 }: SubmitDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const form = useForm<FormValues>({
+    defaultValues: {
+      location: "inside",
+      pees: 0,
+      poops: 0,
+      startTime: formatTimeToHtmlInput(),
+      endTime: formatTimeToHtmlInput(),
+      users: [],
+    },
+  });
+
+  const isOutside = form.watch("location") === "outside";
+
   const [isUserSelectOpen, setIsUserSelectOpen] = useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   const { data: allUsers } = useClient<User[]>(
@@ -95,17 +110,6 @@ export const SubmitDialog = ({
     return entry?.users?.map((user) => hashEmail(user.email)) || [];
   }, [entry]);
 
-  const form = useForm<FormValues>({
-    defaultValues: {
-      location: "inside",
-      pees: 0,
-      poops: 0,
-      startTime: formatTimeToHtmlInput(),
-      endTime: formatTimeToHtmlInput(),
-      users: [],
-    },
-  });
-
   useEffect(() => {
     form.reset({
       location: entry?.location || "inside",
@@ -125,7 +129,9 @@ export const SubmitDialog = ({
 
     const formattedData = {
       startTime: formatTimeToDate(data.startTime, entry?.startTime),
-      endTime: formatTimeToDate(data.endTime, entry?.endTime),
+      endTime: isOutside
+        ? formatTimeToDate(data.endTime, entry?.endTime)
+        : undefined,
       pees: data.pees,
       poops: data.poops,
       location: entry?.mode === "auto" ? "outside" : data.location,
@@ -160,7 +166,7 @@ export const SubmitDialog = ({
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent
-        className="p-4 max-w-sm !w-[90dvw] text-center"
+        className="p-4 max-w-sm !w-[90dvw] text-center overflow-hidden"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader className="mb-1">
@@ -232,48 +238,55 @@ export const SubmitDialog = ({
               )}
             />
 
-            <AnimatePresence initial={false}>
-              {form.watch("location") === "outside" && (
-                <motion.fieldset
-                  className="grid gap-3 grid-cols-2"
-                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                  animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
-                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                  transition={{ duration: 0.6, ease: "anticipate" }}
-                >
-                  <FormField
-                    control={form.control}
-                    name="startTime"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Start tid</FormLabel>
-                        <FormControl>
-                          <Input type="time" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+            <motion.fieldset
+              className="grid gap-3 mb-4 mx-auto w-full grid-cols-2"
+              initial={{ marginLeft: isOutside ? 0 : "25%" }}
+              animate={{ marginLeft: isOutside ? 0 : "25%" }}
+            >
+              <FormField
+                control={form.control}
+                name="startTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {isOutside ? "Start tid" : "Skurke-tid?"}
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="time" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name="endTime"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Slutt tid</FormLabel>
-                        <FormControl>
-                          <Input type="time" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </motion.fieldset>
-              )}
-            </AnimatePresence>
+              <AnimatePresence initial={false}>
+                {isOutside && (
+                  <motion.div
+                    key="endTime"
+                    initial={{ opacity: 0, x: -80 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -80 }}
+                  >
+                    <FormField
+                      control={form.control}
+                      name="endTime"
+                      render={({ field }) => (
+                        <MotionFormItem>
+                          <FormLabel>Slutt tid</FormLabel>
+                          <FormControl>
+                            <Input type="time" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </MotionFormItem>
+                      )}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.fieldset>
 
             <AnimatePresence initial={false}>
-              {form.watch("location") === "outside" && (
+              {isOutside && (
                 <motion.div
                   initial={{ opacity: 0, height: 0, marginBottom: 0 }}
                   animate={{ opacity: 1, height: "auto", marginBottom: 20 }}
