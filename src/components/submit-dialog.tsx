@@ -45,8 +45,10 @@ const formatTimeToHtmlInput = (date?: string) => {
   });
 };
 
-const formatTimeToDate = (time?: string) => {
-  const currentDate = new Date().toISOString().split("T")[0];
+const formatTimeToDate = (time?: string, date?: string) => {
+  const currentDate = date
+    ? new Date(date).toISOString().split("T")[0]
+    : new Date().toISOString().split("T")[0];
   return new Date(`${currentDate}T${time}:00`).toISOString();
 };
 
@@ -104,8 +106,8 @@ export const SubmitDialog = ({
     setIsLoading(true);
 
     const formattedData = {
-      startTime: formatTimeToDate(data.startTime),
-      endTime: formatTimeToDate(data.endTime),
+      startTime: formatTimeToDate(data.startTime, entry?.startTime),
+      endTime: formatTimeToDate(data.endTime, entry?.endTime),
       pees: data.pees,
       poops: data.poops,
       location: entry?.mode === "auto" ? "outside" : data.location,
