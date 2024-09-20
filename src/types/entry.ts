@@ -7,7 +7,7 @@ export const Location = z.enum(["inside", "outside"]);
 
 export const UserReference = z.object({
   _type: z.literal("reference"),
-  _ref: z.string().email(),
+  _ref: z.string(),
 });
 
 export const EntryDocument = z.object({
@@ -20,13 +20,13 @@ export const EntryDocument = z.object({
   location: Location,
   poops: z.number().optional(),
   pees: z.number().optional(),
-  user: UserReference.optional(),
+  users: z.array(UserReference).optional(),
   likes: z.array(UserReference).optional(),
 });
 
 export const ResolvedEntryDocument = EntryDocument.merge(
   z.object({
-    user: User.optional(),
+    users: z.array(User).optional(),
     likes: z.array(User).optional(),
   }),
 );
@@ -37,6 +37,7 @@ export const AutoEntry = z.object({
   location: Location.optional(),
   poops: z.number(),
   pees: z.number(),
+  users: z.array(UserReference).optional(),
 });
 
 export const ManualEntry = z.object({
@@ -45,6 +46,7 @@ export const ManualEntry = z.object({
   location: Location,
   poops: z.number(),
   pees: z.number(),
+  users: z.array(UserReference).optional(),
 });
 
 export type UserReference = z.infer<typeof UserReference>;

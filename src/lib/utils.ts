@@ -9,10 +9,13 @@ export function pluralize(count: number, singular: string, plural: string) {
   return count === 1 ? singular : plural;
 }
 
-export function hashEmail(email: string): string {
+export function hashEmail(email?: string): string {
+  if (!email) return "";
   return Buffer.from(email).toString("base64").replace(/[+/=]/g, "");
 }
 
 export function firstName(name: string): string {
-  return name.split(" ")[0];
+  return (
+    name.split(" ")[0].charAt(0).toUpperCase() + name.split(" ")[0].slice(1)
+  );
 }

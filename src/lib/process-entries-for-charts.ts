@@ -136,7 +136,7 @@ export function calculateStats(entries: ResolvedEntryDocument[]): {
     0,
   );
   const totalPees = entries.reduce((sum, entry) => sum + (entry.pees || 0), 0);
-  const tripsWithWalkers = outdoorTrips.filter((entry) => entry.user);
+  const tripsWithWalkers = outdoorTrips.filter((entry) => entry?.users?.length);
 
   const days = new Set(
     entries.map(
@@ -189,11 +189,13 @@ export function calculateStats(entries: ResolvedEntryDocument[]): {
   const topWalkers = Object.entries(
     tripsWithWalkers.reduce(
       (acc, entry) => {
-        if (entry.user) {
-          acc[entry.user.email] = {
-            user: entry.user,
-            trips: (acc[entry.user.email]?.trips || 0) + 1,
-          };
+        if (entry.users) {
+          for (const user of entry.users) {
+            if (!acc[user.email]) {
+              acc[user.email] = { user, trips: 0 };
+            }
+            acc[user.email].trips += 1;
+          }
         }
         return acc;
       },

@@ -14,7 +14,7 @@ import { getServerSession } from "next-auth";
 import groq from "groq";
 import { hashEmail } from "./utils";
 
-const ENTRY_PROJECTION = groq`{ ..., user->, likes[]-> }`;
+const ENTRY_PROJECTION = groq`{ ..., users[]->, likes[]-> }`;
 
 async function getUserRef(): Promise<UserReference> {
   const session = await getServerSession();
@@ -67,11 +67,11 @@ export async function addManualEntry(entry: ManualEntry) {
     startTime: new Date().toISOString(),
     status: "completed",
     mode: "manual",
-    user: userRef,
+    users: [userRef],
     ...validatedEntry.data,
   };
 
-  await serverClient.create(newDocument);
+  await serverClient.create(newDocument, { autoGenerateArrayKeys: true });
   revalidatePaths();
 }
 
@@ -85,16 +85,18 @@ export async function startEntry() {
     status: "active",
     mode: "auto",
     location: "outside",
-    user: userRef,
+    users: [userRef],
   };
 
-  await serverClient.create(newDocument);
+  await serverClient.create(newDocument, { autoGenerateArrayKeys: true });
   revalidatePaths();
   return newDocument;
 }
 
 export async function updateEntry(entryId: string, entry: AutoEntry) {
   await getUserRef();
+
+  console.log("entryId", entryId, "entry", entry);
 
   const validatedEntry = AutoEntry.safeParse(entry);
   if (!validatedEntry.success) {
@@ -145,7 +147,9 @@ export async function likeEntry(entryId: string) {
     likes: updatedLikes,
   };
 
-  await serverClient.createOrReplace(updatedEntry);
+  await serverClient.createOrReplace(updatedEntry, {
+    autoGenerateArrayKeys: true,
+  });
   revalidatePaths();
 }
 

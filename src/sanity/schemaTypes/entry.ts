@@ -45,10 +45,16 @@ export const entry = defineType({
       name: "pees",
       type: "number",
     }),
+
     defineField({
-      name: "user",
-      type: "reference",
-      to: [{ type: "user" }],
+      name: "users",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "user" }] }],
+    }),
+    defineField({
+      name: "likes",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "user" }] }],
     }),
   ],
   orderings: [

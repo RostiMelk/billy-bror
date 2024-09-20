@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { useOptimistic } from "react";
-import { EditIcon, HeartIcon } from "lucide-react";
+import { HeartIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import type { ResolvedEntryDocument } from "@/types/entry";
 import { useTimeAgo } from "@/hooks/useTimeAgo";
 import { useDuration } from "@/hooks/useDuration";
@@ -60,68 +60,70 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
   }, [entry, onEdit]);
 
   return (
-    <li
-      className="w-full flex items-center py-3 pl-2 pr-1 group-first:pt-0 group-last:pb-0 border-b group-last:border-b-0"
-      onDoubleClick={handleEdit}
-    >
-      <Avatar className="mr-4">
-        <AvatarImage src={optimisticEntry.user?.image ?? undefined} />
-        <AvatarFallback>?</AvatarFallback>
-      </Avatar>
+    <li>
+      <button
+        type="button"
+        className="w-full flex items-center py-3 pl-2 pr-1 group-first:pt-0 group-last:pb-0 border-b group-last:border-b-0"
+        onClick={handleEdit}
+      >
+        <div className="flex -space-x-3 overflow-hidden mr-2">
+          {optimisticEntry.users?.slice(0, 3).map((user) => (
+            <Avatar key={user.email} className="border-2 border-background">
+              <AvatarImage src={user.image ?? undefined} />
+            </Avatar>
+          ))}
+        </div>
 
-      <div className="text-left">
-        <p className="text-sm font-medium truncate">
-          {timeAgo}
-          {isOutside && `, i ${duration}`}
-        </p>
-        <p className="text-sm text-muted-foreground truncate">
-          {optimisticEntry.pees} 💦 {optimisticEntry.poops} 💩{" "}
-          {optimisticEntry.location === "inside" ? "🏠" : "🌳"}
-        </p>
-      </div>
-      <div className="ml-auto flex gap-1">
-        <Button variant="ghost" size="icon" onClick={handleEdit}>
-          <EditIcon className="w-4 h-4 text-muted-foreground" />
-        </Button>
-
-        <TooltipProvider>
-          <Tooltip delayDuration={optimisticEntry.likes?.length ? 200 : 1e9}>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLike}
-                className="gap-2 tabular-nums"
-              >
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={optimisticEntry.likes?.length}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {optimisticEntry.likes?.length || "0"}
-                  </motion.span>
-                </AnimatePresence>
-                <HeartIcon
-                  className={cn(
-                    "w-4 h-4 text-muted-foreground",
-                    isLiked && "text-red-500 fill-red-500",
-                  )}
-                />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent sideOffset={8}>
-              <p className="text-xs">
-                {optimisticEntry.likes
-                  ?.map((like) => firstName(like.name))
-                  .join(", ")}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+        <div className="text-left">
+          <p className="text-sm font-medium truncate">
+            {timeAgo}
+            {isOutside && `, i ${duration}`}
+          </p>
+          <p className="text-sm text-muted-foreground truncate">
+            {optimisticEntry.pees} 💦 {optimisticEntry.poops} 💩{" "}
+            {optimisticEntry.location === "inside" ? "🏠" : "🌳"}
+          </p>
+        </div>
+        <div className="ml-auto flex gap-1">
+          <TooltipProvider>
+            <Tooltip delayDuration={optimisticEntry.likes?.length ? 200 : 1e9}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLike}
+                  className="gap-2 tabular-nums"
+                >
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={optimisticEntry.likes?.length}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {optimisticEntry.likes?.length || "0"}
+                    </motion.span>
+                  </AnimatePresence>
+                  <HeartIcon
+                    className={cn(
+                      "w-4 h-4 text-muted-foreground",
+                      isLiked && "text-red-500 fill-red-500",
+                    )}
+                  />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent sideOffset={8}>
+                <p className="text-xs">
+                  {optimisticEntry.likes
+                    ?.map((like) => firstName(like.name))
+                    .join(", ")}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </button>
     </li>
   );
 };

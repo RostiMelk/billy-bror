@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { addManualEntry, deleteEntry, updateEntry } from "@/lib/actions";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import {
@@ -25,7 +25,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { NumberInput } from "./ui/number-input";
+import { NumberInput } from "@/components/ui/number-input";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { useClient } from "@/hooks/useClient";
+import type { User } from "@/types/user";
+import { firstName, hashEmail } from "@/lib/utils";
 
 interface SubmitDialogProps {
   entry: ResolvedEntryDocument | null;
@@ -55,6 +59,21 @@ export const SubmitDialog = ({
   onSubmit,
 }: SubmitDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isUserSelectOpen, setIsUserSelectOpen] = useState(false);
+  const { data: allUsers } = useClient<User[]>(
+    `*[_type== "user"] | order(name)`,
+  );
+  const allUserOptions = useMemo(() => {
+    return (
+      allUsers?.map((user) => ({
+        label: firstName(user.name),
+        value: hashEmail(user.email),
+      })) || []
+    );
+  }, [allUsers]);
+  const defaultUsers = useMemo(() => {
+    return entry?.users?.map((user) => hashEmail(user.email)) || [];
+  }, [entry]);
 
   const form = useForm<FormValues>({
     defaultValues: {
@@ -63,6 +82,7 @@ export const SubmitDialog = ({
       poops: 0,
       startTime: formatTimeToHtmlInput(),
       endTime: formatTimeToHtmlInput(),
+      users: [],
     },
   });
 
@@ -73,6 +93,10 @@ export const SubmitDialog = ({
       poops: entry?.poops || 0,
       startTime: formatTimeToHtmlInput(entry?.startTime),
       endTime: formatTimeToHtmlInput(entry?.endTime),
+      users: entry?.users?.map((user) => ({
+        _type: "reference",
+        _ref: hashEmail(user.email),
+      })),
     });
   }, [entry, form]);
 
@@ -85,6 +109,7 @@ export const SubmitDialog = ({
       pees: data.pees,
       poops: data.poops,
       location: entry?.mode === "auto" ? "outside" : data.location,
+      users: data.users,
     };
 
     if (entry) {
@@ -106,8 +131,14 @@ export const SubmitDialog = ({
     onSubmit();
   };
 
+  const handleDialogClose = () => {
+    if (!isUserSelectOpen) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent
         className="p-4 max-w-sm !w-[90dvw] text-center"
         onOpenAutoFocus={(e) => e.preventDefault()}
@@ -186,7 +217,7 @@ export const SubmitDialog = ({
                 <motion.fieldset
                   className="grid gap-3 grid-cols-2"
                   initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                  animate={{ opacity: 1, height: "auto", marginBottom: 20 }}
+                  animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
                   exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                   transition={{ duration: 0.6, ease: "anticipate" }}
                 >
@@ -218,6 +249,45 @@ export const SubmitDialog = ({
                     )}
                   />
                 </motion.fieldset>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence initial={false}>
+              {(entry || form.watch("location") === "outside") && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginBottom: 20 }}
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  transition={{ duration: 0.6, ease: "anticipate" }}
+                >
+                  <FormField
+                    control={form.control}
+                    name="users"
+                    render={({ field }) => (
+                      <FormItem className="mb-5">
+                        <FormLabel>Hvem var med å gå?</FormLabel>
+                        <FormControl>
+                          <MultiSelect
+                            placeholder="Velg turgåere"
+                            defaultValue={defaultUsers}
+                            options={allUserOptions}
+                            onValueChange={(value: string[]) =>
+                              field.onChange(
+                                value.map((_ref) => ({
+                                  _type: "reference",
+                                  _ref,
+                                })),
+                              )
+                            }
+                            value={field.value?.map((u) => u._ref) || []}
+                            onOpenChange={setIsUserSelectOpen}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </motion.div>
               )}
             </AnimatePresence>
 
