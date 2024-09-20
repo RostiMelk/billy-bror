@@ -136,20 +136,6 @@ export const MultiSelect = React.forwardRef<
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
-    const [isAnimating, setIsAnimating] = React.useState(false);
-
-    const handleInputKeyDown = (
-      event: React.KeyboardEvent<HTMLInputElement>,
-    ) => {
-      if (event.key === "Enter") {
-        setIsPopoverOpen(true);
-      } else if (event.key === "Backspace" && !event.currentTarget.value) {
-        const newSelectedValues = [...selectedValues];
-        newSelectedValues.pop();
-        setSelectedValues(newSelectedValues);
-        onValueChange(newSelectedValues);
-      }
-    };
 
     const toggleOption = (option: string) => {
       const newSelectedValues = selectedValues.includes(option)
@@ -172,16 +158,6 @@ export const MultiSelect = React.forwardRef<
       const newSelectedValues = selectedValues.slice(0, maxCount);
       setSelectedValues(newSelectedValues);
       onValueChange(newSelectedValues);
-    };
-
-    const toggleAll = () => {
-      if (selectedValues.length === options.length) {
-        handleClear();
-      } else {
-        const allValues = options.map((option) => option.value);
-        setSelectedValues(allValues);
-        onValueChange(allValues);
-      }
     };
 
     const handleOpenChange = (open: boolean) => {
@@ -214,12 +190,7 @@ export const MultiSelect = React.forwardRef<
                     const option = options.find((o) => o.value === value);
                     const IconComponent = option?.icon;
                     return (
-                      <Badge
-                        key={value}
-                        variant="secondary"
-                        className={cn(isAnimating ? "animate-bounce" : "")}
-                        style={{ animationDuration: `${animation}s` }}
-                      >
+                      <Badge key={value} variant="secondary">
                         {IconComponent && (
                           <IconComponent className="size-5 mr-1.5" />
                         )}
@@ -238,13 +209,7 @@ export const MultiSelect = React.forwardRef<
                     );
                   })}
                   {selectedValues.length > maxCount && (
-                    <Badge
-                      className={cn(
-                        isAnimating ? "animate-bounce" : "",
-                        multiSelectVariants({ variant }),
-                      )}
-                      style={{ animationDuration: `${animation}s` }}
-                    >
+                    <Badge className={multiSelectVariants({ variant })}>
                       {`+ ${selectedValues.length - maxCount} more`}
                       <Button
                         className="ml-2 size-5 cursor-pointer bg-background text-muted-foreground rounded-full"
@@ -333,15 +298,6 @@ export const MultiSelect = React.forwardRef<
             </CommandList>
           </Command>
         </PopoverContent>
-        {animation > 0 && selectedValues.length > 0 && (
-          <WandSparkles
-            className={cn(
-              "cursor-pointer my-2 text-foreground bg-background w-3 h-3",
-              isAnimating ? "" : "text-muted-foreground",
-            )}
-            onClick={() => setIsAnimating(!isAnimating)}
-          />
-        )}
       </Popover>
     );
   },
