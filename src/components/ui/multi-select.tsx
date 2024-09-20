@@ -253,9 +253,8 @@ export const MultiSelect = React.forwardRef<
                     >
                       {`+ ${selectedValues.length - maxCount} more`}
                       <Button
-                        className="ml-2 size-5 cursor-pointer text-muted-foreground rounded-full"
+                        className="ml-2 size-5 cursor-pointer bg-background text-muted-foreground rounded-full"
                         size="icon"
-                        variant="secondary"
                         onClick={(event) => {
                           event.stopPropagation();
                           clearExtraOptions();
