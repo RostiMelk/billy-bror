@@ -9,7 +9,7 @@ import {
   DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { addManualEntry, deleteEntry, updateEntry } from "@/lib/actions";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -32,6 +32,16 @@ import type { User } from "@/types/user";
 import { firstName, hashEmail } from "@/lib/utils";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import type { AvatarProps } from "@radix-ui/react-avatar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { cn } from "@/lib/utils";
 
 interface SubmitDialogProps {
   entry: ResolvedEntryDocument | null;
@@ -64,6 +74,7 @@ export const SubmitDialog = ({
 }: SubmitDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isUserSelectOpen, setIsUserSelectOpen] = useState(false);
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   const { data: allUsers } = useClient<User[]>(
     `*[_type== "user"] | order(name)`,
   );
@@ -135,7 +146,7 @@ export const SubmitDialog = ({
     if (!entry) return;
 
     setIsLoading(true);
-    await deleteEntry(entry._id);
+    deleteEntry(entry._id);
     setIsLoading(false);
     onSubmit();
   };
@@ -302,18 +313,35 @@ export const SubmitDialog = ({
 
             <footer className="flex gap-2 bg-background relative z-10">
               {entry?.status === "completed" && (
-                <Button
-                  type="button"
-                  onClick={handleDelete}
-                  variant="destructive"
-                  className="w-full"
-                  disabled={isLoading}
+                <AlertDialog
+                  open={isDeleteAlertOpen}
+                  onOpenChange={setIsDeleteAlertOpen}
                 >
-                  {isLoading && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Slett
-                </Button>
+                  <AlertDialogTrigger
+                    type="button"
+                    className={buttonVariants({
+                      variant: "destructive",
+                      className: "w-full",
+                    })}
+                    disabled={isLoading}
+                  >
+                    Slett
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="max-w-xs">
+                    <AlertDialogHeader>
+                      Er du sikker på at du vil slette turen?
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Avbryt</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleDelete}
+                        className={buttonVariants({ variant: "destructive" })}
+                      >
+                        Slett
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
 
               <Button type="submit" className="w-full" disabled={isLoading}>
