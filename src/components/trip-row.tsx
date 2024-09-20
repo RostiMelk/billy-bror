@@ -47,13 +47,17 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
     return optimisticEntry.likes?.some((like) => like.email === email);
   }, [optimisticEntry.likes, session]);
 
-  const handleLike = useCallback(async () => {
-    const user = session?.user;
-    if (!user) return;
+  const handleLike = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const user = session?.user;
+      if (!user) return;
 
-    addOptimisticEntry(!isLiked);
-    await likeEntry(entry._id);
-  }, [entry._id, isLiked, session, addOptimisticEntry]);
+      addOptimisticEntry(!isLiked);
+      await likeEntry(entry._id);
+    },
+    [entry._id, isLiked, session, addOptimisticEntry],
+  );
 
   const handleEdit = useCallback(() => {
     onEdit(entry);
