@@ -71,6 +71,7 @@ export const SubmitDialog = ({
   onClose,
   onSubmit,
 }: SubmitDialogProps) => {
+  console.log("entry dialog", entry);
   const [isLoading, setIsLoading] = useState(false);
   const [isUserSelectOpen, setIsUserSelectOpen] = useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);

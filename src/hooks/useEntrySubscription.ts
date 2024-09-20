@@ -67,9 +67,7 @@ export function useEntrySubscription() {
               { id: entry._id },
             );
             setAllEntries((entries) => {
-              const index = entries.findIndex(
-                (prev) => prev._id === fullEntry._id,
-              );
+              const index = entries.findIndex((e) => e._id === fullEntry._id);
               return index === -1
                 ? [fullEntry, ...entries]
                 : entries.map((e, i) => (i === index ? fullEntry : e));

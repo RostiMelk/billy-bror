@@ -75,11 +75,13 @@ export async function addManualEntry(entry: ManualEntry) {
   revalidatePaths();
 }
 
-export async function startEntry(isoStartTime: string) {
+export async function startEntry(
+  isoStartTime: string,
+): Promise<ResolvedEntryDocument> {
   const userRef = await getUserRef();
-
+  const _id = randomUUID();
   const newDocument: EntryDocument = {
-    _id: randomUUID(),
+    _id,
     _type: "entry",
     startTime: isoStartTime,
     status: "active",
@@ -87,10 +89,12 @@ export async function startEntry(isoStartTime: string) {
     location: "outside",
     users: [userRef],
   };
-
   await serverClient.create(newDocument, { autoGenerateArrayKeys: true });
   revalidatePaths();
-  return newDocument;
+  return serverClient.fetch<ResolvedEntryDocument>(
+    `*[_id == $_id][0] ${ENTRY_PROJECTION}`,
+    { _id },
+  );
 }
 
 export async function updateEntry(entryId: string, entry: AutoEntry) {
