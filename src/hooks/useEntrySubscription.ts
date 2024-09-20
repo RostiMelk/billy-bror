@@ -5,7 +5,7 @@ import type { ResolvedEntryDocument } from "@/types/entry";
 import type { MutationEvent } from "@sanity/client";
 
 const ENTRY_PROJECTION = groq`{ ..., users[]->, likes[]-> }`;
-const ACTIVE_ENTRY_QUERY = groq`*[_type == "entry" && status == "active" && mode == "auto"][0]`;
+const ACTIVE_ENTRY_QUERY = groq`*[_type == "entry" && status == "active" && mode == "auto"][0] ${ENTRY_PROJECTION}`;
 const ALL_ENTRIES = groq`*[_type == "entry" && status == "completed"] | order(endTime desc) ${ENTRY_PROJECTION}`;
 
 type EntryEvent = MutationEvent<ResolvedEntryDocument>;
@@ -32,7 +32,7 @@ export function useEntrySubscription() {
   useEffect(() => {
     const activeSubscription = client
       .listen(ACTIVE_ENTRY_QUERY, {}, { visibility: "query" })
-      .subscribe((update) => {
+      .subscribe(async (update) => {
         if (update.type === "mutation" && update.eventId === "delete") {
           setActiveEntry(null);
           return;
@@ -43,11 +43,16 @@ export function useEntrySubscription() {
             setActiveEntry(null);
           } else {
             setActiveEntry(newEntry);
+            const fullEntry = await client.fetch(
+              groq`*[_type == "entry" && _id == $id][0] ${ENTRY_PROJECTION}`,
+              { id: newEntry._id },
+            );
+            setActiveEntry(fullEntry);
           }
         }
       });
 
-    const latestSubscription = client
+    const allEntriesSubscription = client
       .listen<EntryEvent>(ALL_ENTRIES, {}, { visibility: "query" })
       .subscribe(async (update) => {
         if (update.type === "mutation" && update.transition === "disappear") {
@@ -84,7 +89,7 @@ export function useEntrySubscription() {
 
     return () => {
       activeSubscription.unsubscribe();
-      latestSubscription.unsubscribe();
+      allEntriesSubscription.unsubscribe();
       window.removeEventListener("visibilitychange", visibilityChangeHandler);
     };
   }, [fetchEntries]);

@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { addManualEntry, deleteEntry, updateEntry } from "@/lib/actions";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import {
