@@ -33,21 +33,21 @@ export async function getActiveEntry(): Promise<ResolvedEntryDocument | null> {
 }
 
 export async function getLatestOutsideEntry(): Promise<ResolvedEntryDocument | null> {
-  const query = groq`*[_type == "entry" && location == "outside"] | order(startTime desc) [0] ${ENTRY_PROJECTION}`;
+  const query = groq`*[_type == "entry" && location == "outside"] | order(coalesce(endTime, startTime) desc) [0] ${ENTRY_PROJECTION}`;
   return serverClient.fetch(query);
 }
 
 export async function getAllCompletedEntries(): Promise<
   ResolvedEntryDocument[]
 > {
-  const query = groq`*[_type == "entry" && status == "completed"] | order(startTime desc) ${ENTRY_PROJECTION}`;
+  const query = groq`*[_type == "entry" && status == "completed"] | order(coalesce(endTime, startTime) desc) ${ENTRY_PROJECTION}`;
   return serverClient.fetch(query);
 }
 
 export async function getAllEntriesThisWeek(): Promise<
   ResolvedEntryDocument[]
 > {
-  const query = groq`*[_type == "entry" && status == "completed" && startTime > $weekAgo] | order(startTime desc) ${ENTRY_PROJECTION}`;
+  const query = groq`*[_type == "entry" && status == "completed" && startTime > $weekAgo] | order(coalesce(endTime, startTime) desc) ${ENTRY_PROJECTION}`;
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
   return serverClient.fetch(query, { weekAgo });

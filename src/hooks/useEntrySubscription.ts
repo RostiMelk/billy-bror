@@ -6,7 +6,7 @@ import type { MutationEvent } from "@sanity/client";
 
 const ENTRY_PROJECTION = groq`{ ..., users[]->, likes[]-> }`;
 const ACTIVE_ENTRY_QUERY = groq`*[_type == "entry" && status == "active" && mode == "auto"][0] ${ENTRY_PROJECTION}`;
-const ALL_ENTRIES = groq`*[_type == "entry" && status == "completed"] | order(endTime desc) ${ENTRY_PROJECTION}`;
+const ALL_ENTRIES = groq`*[_type == "entry" && status == "completed"] | order(coalesce(endTime, startTime) desc) ${ENTRY_PROJECTION}`;
 
 type EntryEvent = MutationEvent<ResolvedEntryDocument>;
 
