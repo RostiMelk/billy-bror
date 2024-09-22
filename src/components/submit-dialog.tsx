@@ -122,7 +122,7 @@ export const SubmitDialog = ({
         _ref: hashEmail(user.email),
       })),
     });
-  }, [entry, form]);
+  }, [entry, open, form]);
 
   const onSubmitForm = async (data: FormValues) => {
     setIsLoading(true);
