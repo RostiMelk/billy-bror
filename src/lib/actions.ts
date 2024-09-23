@@ -154,7 +154,6 @@ export async function likeEntry(entryId: string) {
   await serverClient.createOrReplace(updatedEntry, {
     autoGenerateArrayKeys: true,
   });
-  revalidatePaths();
 }
 
 function revalidatePaths() {
