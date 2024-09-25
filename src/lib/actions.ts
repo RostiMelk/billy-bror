@@ -49,7 +49,8 @@ export async function getAllEntriesThisWeek(): Promise<
 > {
   const query = groq`*[_type == "entry" && status == "completed" && startTime > $weekAgo] | order(coalesce(endTime, startTime) desc) ${ENTRY_PROJECTION}`;
   const weekAgo = new Date();
-  weekAgo.setDate(weekAgo.getDate() - 7);
+  weekAgo.setDate(weekAgo.getDate() - 6);
+  weekAgo.setHours(0, 0, 0, 0);
   return serverClient.fetch(query, { weekAgo });
 }
 

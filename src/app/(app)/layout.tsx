@@ -1,7 +1,7 @@
 import { EntryBanner } from "@/components/entry-banner";
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Loader2 as LoadingSpinner } from "lucide-react";
+import { LoaderCircleIcon } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Billy Bror",
@@ -24,7 +24,7 @@ export default async function AppLayout({
 function Loader() {
   return (
     <div className="h-[100dvh] grid place-items-center">
-      <LoadingSpinner className="animate-spin" />
+      <LoaderCircleIcon className="animate-spin size-8 text-muted-foreground" />
     </div>
   );
 }
