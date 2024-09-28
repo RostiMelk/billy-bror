@@ -6,6 +6,14 @@ import { LoaderCircleIcon } from "lucide-react";
 export const metadata: Metadata = {
   title: "Billy Bror",
   description: "A poop tracker for the modern age",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+  },
+  appleWebApp: {
+    statusBarStyle: "black-translucent",
+    capable: true,
+  },
 };
 
 export default async function AppLayout({
@@ -14,10 +22,12 @@ export default async function AppLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Suspense fallback={<Loader />}>
-      <EntryBanner />
-      <div className="container grid max-w-xl">{children}</div>
-    </Suspense>
+    <>
+      <Suspense fallback={<Loader />}>
+        <EntryBanner />
+        <div className="container grid max-w-xl">{children}</div>
+      </Suspense>
+    </>
   );
 }
 
