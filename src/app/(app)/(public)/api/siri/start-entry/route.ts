@@ -12,7 +12,7 @@ const responseSchema = z.object({
   message: z.string(),
 });
 
-export default async function POST(request: Request) {
+export async function POST(request: Request) {
   const { hash } = requestSchema.parse(request.body);
 
   const user = await serverClient.fetch(`*[_type == "user" && _id == $hash]`, {
