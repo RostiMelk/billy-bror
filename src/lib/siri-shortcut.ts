@@ -5,7 +5,7 @@ export function createSiriShortcut(
   apiBody: Record<string, string>,
   shortcutName: string,
 ): string {
-  const shortcutData = {
+  const shortcutData: plist.PlistObject = {
     WFWorkflowActions: [
       {
         WFWorkflowActionIdentifier: "is.workflow.actions.setvariable",
