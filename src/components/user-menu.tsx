@@ -21,19 +21,12 @@ export const UserMenu = () => {
     if (!session?.user) {
       throw new Error("User not authenticated");
     }
-
     const apiUrl = "https://billy.rosti.no/api/siri/start-entry";
     const apiBody = { hash: hashEmail(session.user.email) };
     const shortcutName = "Start trip";
-
     const shortcutData = createSiriShortcut(apiUrl, apiBody, shortcutName);
-
-    // Create a Blob with the shortcut data
     const blob = new Blob([shortcutData], { type: "text/plain;charset=utf-8" });
-
-    // Use file-saver to trigger the download
     saveAs(blob, `${shortcutName}.shortcut`);
-
     return shortcutName;
   };
 
