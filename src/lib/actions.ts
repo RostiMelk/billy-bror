@@ -11,8 +11,10 @@ import {
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
+import { saveAs } from "file-saver";
 import groq from "groq";
 import { hashEmail } from "./utils";
+import { createSiriShortcut } from "./siri-shortcut";
 
 const ENTRY_PROJECTION = groq`{ ..., users[]->, likes[]-> }`;
 
@@ -79,6 +81,11 @@ export async function addManualEntry(entry: ManualEntry) {
 export async function startEntry(
   isoStartTime: string,
 ): Promise<ResolvedEntryDocument> {
+  const activeEntry = await getActiveEntry();
+  if (activeEntry) {
+    throw new Error("An active entry already exists");
+  }
+
   const userRef = await getUserRef();
   const _id = randomUUID();
   const newDocument: EntryDocument = {
@@ -157,7 +164,6 @@ export async function likeEntry(entryId: string) {
   });
 }
 
-function revalidatePaths() {
-  revalidatePath("/");
-  revalidatePath("/stats");
+export async function revalidatePaths() {
+  await Promise.all([revalidatePath("/"), revalidatePath("/stats")]);
 }
