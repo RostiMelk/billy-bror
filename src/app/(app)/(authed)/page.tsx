@@ -14,7 +14,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useEntrySubscription } from "@/hooks/useEntrySubscription";
 import { useIsPwa } from "@/hooks/useIsPwa";
-import { cn } from "@/lib/utils";
+import { cn, firstName } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 const motionProps = {
   initial: { opacity: 0, y: 20 },
@@ -28,6 +29,7 @@ export default function Home() {
   const [editingEntry, setEditingEntry] =
     useState<ResolvedEntryDocument | null>(null);
   const [showSubmitDialog, setShowSubmitDialog] = useState<boolean>(false);
+  const session = useSession();
   const isPwa = useIsPwa();
 
   const handleAddManually = useCallback(() => {
@@ -55,8 +57,16 @@ export default function Home() {
   useEffect(() => {
     const visibilityChangeHandler = async () => {
       if (document.visibilityState !== "visible") return;
-      const message = activeEntry
+
+      const walker = activeEntry?.users?.[0];
+      const isMe = walker?.email === session.data?.user?.email;
+
+      const activeTripMessage = isMe
         ? "Håper du har hatt en fin tur! 🐕‍🦺"
+        : `${firstName(walker?.name)} er på tur! 🤩`;
+
+      const message = activeEntry
+        ? activeTripMessage
         : "Klar for ny tur? Velkommen tilbake! 👋";
       const description = activeEntry
         ? "Trykk på stopp for å avslutte turen"
@@ -71,7 +81,7 @@ export default function Home() {
       window.removeEventListener("visibilitychange", visibilityChangeHandler);
       document.body.style.overflow = "auto";
     };
-  }, [activeEntry]);
+  }, [activeEntry, session]);
 
   const handleStartEntry = useCallback(async () => {
     const startTime = new Date().toISOString();

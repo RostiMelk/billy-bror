@@ -14,7 +14,8 @@ export function hashEmail(email?: string): string {
   return Buffer.from(email).toString("base64").replace(/[+/=]/g, "");
 }
 
-export function firstName(name: string): string {
+export function firstName(name?: string): string {
+  if (!name) return "";
   return (
     name.split(" ")[0].charAt(0).toUpperCase() + name.split(" ")[0].slice(1)
   );
