@@ -9,18 +9,18 @@ const requestSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const { hash } = requestSchema.parse(request.body);
+  const { hash } = requestSchema.parse(await request.json());
 
   const user = await serverClient.fetch(`*[_type == "user" && _id == $hash]`, {
     hash,
   });
   if (!user) {
-    return Response.json({ message: "User not found" });
+    return Response.json({ message: "Error: User not found" });
   }
 
   const activeEntry = await getActiveEntry();
   if (activeEntry) {
-    return Response.json({ message: "An active entry already exists" });
+    return Response.json({ message: "There is already an ongoing walk" });
   }
 
   const userRef = {
@@ -42,5 +42,5 @@ export async function POST(request: Request) {
   await serverClient.create(newDocument, { autoGenerateArrayKeys: true });
 
   revalidatePaths();
-  return Response.json({ message: "Trip started" });
+  return Response.json({ message: "All done, have a good walk!" });
 }
