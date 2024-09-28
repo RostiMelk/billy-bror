@@ -8,10 +8,6 @@ const requestSchema = z.object({
   hash: z.string(),
 });
 
-const responseSchema = z.object({
-  message: z.string(),
-});
-
 export async function POST(request: Request) {
   const { hash } = requestSchema.parse(request.body);
 
@@ -19,14 +15,12 @@ export async function POST(request: Request) {
     hash,
   });
   if (!user) {
-    return responseSchema.parse({ message: "User not found" });
+    return Response.json({ message: "User not found" });
   }
 
   const activeEntry = await getActiveEntry();
   if (activeEntry) {
-    return responseSchema.parse({
-      message: "There is already an ongoing trip",
-    });
+    return Response.json({ message: "An active entry already exists" });
   }
 
   const userRef = {
@@ -48,5 +42,5 @@ export async function POST(request: Request) {
   await serverClient.create(newDocument, { autoGenerateArrayKeys: true });
 
   revalidatePaths();
-  return responseSchema.parse({ message: "Trip started" });
+  return Response.json({ message: "Trip started" });
 }
