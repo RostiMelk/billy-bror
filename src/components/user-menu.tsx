@@ -43,14 +43,14 @@ export const UserMenu = () => {
         <p className="text-sm text-muted-foreground">{session.user.email}</p>
 
         <nav className="grid gap-2 mt-3">
-          <Button
+          {/*<Button
             onClick={handleCreateStartEntrySiriShortcut}
             size="sm"
             className="w-full"
             variant="ghost"
           >
             Lag en Siri snarvei
-          </Button>
+          </Button>*/}
 
           <Button
             onClick={async () => await signOut()}
