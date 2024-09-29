@@ -68,6 +68,8 @@ type FormValues = ManualEntry | AutoEntry;
 
 const MotionFormItem = motion(FormItem);
 
+const USER_QUERY = `*[_type== "user"] | order(name asc)`;
+
 export const SubmitDialog = ({
   entry,
   open,
@@ -90,9 +92,7 @@ export const SubmitDialog = ({
 
   const [isUserSelectOpen, setIsUserSelectOpen] = useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
-  const { data: allUsers } = useClient<User[]>(
-    `*[_type== "user"] | order(name)`,
-  );
+  const { data: allUsers } = useClient<User[]>(USER_QUERY);
   const allUserOptions = useMemo(() => {
     return (
       allUsers?.map((user) => ({

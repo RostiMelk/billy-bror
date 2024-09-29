@@ -24,8 +24,24 @@ const motionProps = {
 };
 
 export default function Home() {
-  const { activeEntry, setActiveEntry, allEntries, isLoading } =
-    useEntrySubscription();
+  const {
+    activeEntry,
+    setActiveEntry,
+    allEntries,
+    isLoading,
+    loadMore,
+    hasNextPage,
+  } = useEntrySubscription();
+
+  console.log({
+    activeEntry,
+    setActiveEntry,
+    allEntries,
+    isLoading,
+    loadMore,
+    hasNextPage,
+  });
+
   const [editingEntry, setEditingEntry] =
     useState<ResolvedEntryDocument | null>(null);
   const [showSubmitDialog, setShowSubmitDialog] = useState<boolean>(false);
@@ -134,7 +150,13 @@ export default function Home() {
               </motion.div>
             ) : (
               <motion.div key="lastTrip" {...motionProps}>
-                <AllTrips entries={allEntries} onEdit={handleEditEntry} />
+                <AllTrips
+                  entries={allEntries}
+                  onEdit={handleEditEntry}
+                  loadMore={loadMore}
+                  hasNextPage={hasNextPage}
+                  isLoading={isLoading}
+                />
               </motion.div>
             )}
           </AnimatePresence>

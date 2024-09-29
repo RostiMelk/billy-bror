@@ -22,6 +22,7 @@
     "@sanity/client": "^6.21.3",
     "@sanity/image-url": "1",
     "@sanity/vision": "3",
+    "@tanstack/react-virtual": "^3.10.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",

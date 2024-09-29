@@ -10,24 +10,39 @@ const ALL_ENTRIES = groq`*[_type == "entry" && status == "completed"] | order(co
 
 type EntryEvent = MutationEvent<ResolvedEntryDocument>;
 
+const PAGE_SIZE = 20;
+
 export function useEntrySubscription() {
   const [activeEntry, setActiveEntry] = useState<ResolvedEntryDocument | null>(
     null,
   );
   const [allEntries, setAllEntries] = useState<ResolvedEntryDocument[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(true);
 
-  const fetchEntries = useCallback(async () => {
-    const [activeEntry, allEntries] = await Promise.all([
+  const fetchEntries = useCallback(async (page: number) => {
+    const [activeEntry, fetchedEntries] = await Promise.all([
       client.fetch(ACTIVE_ENTRY_QUERY),
-      client.fetch(ALL_ENTRIES),
+      client.fetch(
+        `${ALL_ENTRIES}[${(page - 1) * PAGE_SIZE}...${page * PAGE_SIZE}]`,
+      ),
     ]);
+
     setActiveEntry(activeEntry);
-    setAllEntries(allEntries);
+    setAllEntries((prev) => [...prev, ...fetchedEntries]);
+    setHasNextPage(fetchedEntries.length === PAGE_SIZE);
     setIsLoading(false);
 
-    return [activeEntry, allEntries];
+    return [activeEntry, fetchedEntries];
   }, []);
+
+  const loadMore = useCallback(() => {
+    if (!hasNextPage || isLoading) return;
+    setPageNumber((prev) => prev + 1);
+    setIsLoading(true);
+    fetchEntries(pageNumber + 1);
+  }, [hasNextPage, isLoading, fetchEntries, pageNumber]);
 
   useEffect(() => {
     const activeSubscription = client
@@ -78,11 +93,13 @@ export function useEntrySubscription() {
 
     const visibilityChangeHandler = async () => {
       if (document.visibilityState !== "visible") return;
-      fetchEntries();
+      setPageNumber(1);
+      setAllEntries([]);
+      fetchEntries(1);
     };
 
     setIsLoading(true);
-    fetchEntries();
+    fetchEntries(1);
     window.addEventListener("visibilitychange", visibilityChangeHandler);
 
     return () => {
@@ -92,5 +109,12 @@ export function useEntrySubscription() {
     };
   }, [fetchEntries]);
 
-  return { activeEntry, setActiveEntry, allEntries, isLoading };
+  return {
+    activeEntry,
+    setActiveEntry,
+    allEntries,
+    isLoading,
+    loadMore,
+    hasNextPage,
+  };
 }
