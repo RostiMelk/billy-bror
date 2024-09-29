@@ -29,7 +29,7 @@ import { NumberInput } from "@/components/ui/number-input";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useClient } from "@/hooks/useClient";
 import type { User } from "@/types/user";
-import { cn, firstName, hashEmail } from "@/lib/utils";
+import { firstName, hashEmail } from "@/lib/utils";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import type { AvatarProps } from "@radix-ui/react-avatar";
 import {
@@ -41,6 +41,7 @@ import {
   AlertDialogFooter,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface SubmitDialogProps {
   entry: ResolvedEntryDocument | null;
@@ -109,6 +110,13 @@ export const SubmitDialog = ({
   const defaultUsers = useMemo(() => {
     return entry?.users?.map((user) => hashEmail(user.email)) || [];
   }, [entry]);
+
+  const isEntryUnderAMinute = useMemo(() => {
+    if (!entry) return false;
+    const startTime = new Date(entry.startTime).getTime();
+    const currentTime = new Date().getTime();
+    return currentTime - startTime < 60 * 1000;
+  }, [entry, open]);
 
   useEffect(() => {
     form.reset({
@@ -341,7 +349,9 @@ export const SubmitDialog = ({
                     Slett
                   </AlertDialogTrigger>
                   <AlertDialogContent className="max-w-xs">
-                    <AlertDialogHeader>Vil du slette turen?</AlertDialogHeader>
+                    <AlertDialogHeader>
+                      Er du sikker på at du slette turen?
+                    </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Avbryt</AlertDialogCancel>
                       <AlertDialogAction
@@ -353,6 +363,21 @@ export const SubmitDialog = ({
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
+              )}
+
+              {entry?.status === "active" && isEntryUnderAMinute && (
+                <Button
+                  type="button"
+                  className="w-full"
+                  onClick={() => {
+                    handleDelete();
+                    toast.info("Turen ble avbrutt og slettet");
+                  }}
+                  disabled={isLoading}
+                  variant="destructive"
+                >
+                  Avbryt turen
+                </Button>
               )}
 
               <Button type="submit" className="w-full" disabled={isLoading}>
