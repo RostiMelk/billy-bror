@@ -83,7 +83,7 @@ export default function Home() {
         ? "Trykk på stopp for å avslutte turen"
         : "Trykk på start for å begynne en ny tur";
       const action = canJoin && {
-        label: "Jeg er med!",
+        label: "Bli med!",
         onClick: handleAppendMyselfToEntry,
       };
 
