@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { client } from "@/lib/client";
 import groq from "groq";
 import type { ResolvedEntryDocument } from "@/types/entry";
@@ -6,7 +6,7 @@ import type { MutationEvent } from "@sanity/client";
 
 const ENTRY_PROJECTION = groq`{ ..., users[]->, likes[]-> }`;
 const ACTIVE_ENTRY_QUERY = groq`*[_type == "entry" && status == "active" && mode == "auto"][0] ${ENTRY_PROJECTION}`;
-const ALL_ENTRIES = groq`*[_type == "entry" && status == "completed"] | order(coalesce(endTime, startTime) desc) ${ENTRY_PROJECTION}`;
+const ALL_ENTRIES = groq`*[_type == "entry" && status == "completed" && startTime > $weekAgo] | order(coalesce(endTime, startTime) desc) ${ENTRY_PROJECTION}`;
 
 type EntryEvent = MutationEvent<ResolvedEntryDocument>;
 
@@ -17,17 +17,24 @@ export function useEntrySubscription() {
   const [allEntries, setAllEntries] = useState<ResolvedEntryDocument[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const weekAgo = useMemo(() => {
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 6);
+    weekAgo.setHours(0, 0, 0, 0);
+    return weekAgo.toISOString();
+  }, []);
+
   const fetchEntries = useCallback(async () => {
     const [activeEntry, allEntries] = await Promise.all([
       client.fetch(ACTIVE_ENTRY_QUERY),
-      client.fetch(ALL_ENTRIES),
+      client.fetch(ALL_ENTRIES, { weekAgo }),
     ]);
     setActiveEntry(activeEntry);
     setAllEntries(allEntries);
     setIsLoading(false);
 
     return [activeEntry, allEntries];
-  }, []);
+  }, [weekAgo]);
 
   useEffect(() => {
     const activeSubscription = client
@@ -53,7 +60,7 @@ export function useEntrySubscription() {
       });
 
     const allEntriesSubscription = client
-      .listen<EntryEvent>(ALL_ENTRIES, {}, { visibility: "query" })
+      .listen<EntryEvent>(ALL_ENTRIES, { weekAgo }, { visibility: "query" })
       .subscribe(async (update) => {
         if (update.type === "mutation" && update.transition === "disappear") {
           setAllEntries((entries) =>
@@ -90,7 +97,7 @@ export function useEntrySubscription() {
       allEntriesSubscription.unsubscribe();
       window.removeEventListener("visibilitychange", visibilityChangeHandler);
     };
-  }, [fetchEntries]);
+  }, [fetchEntries, weekAgo]);
 
   return { activeEntry, setActiveEntry, allEntries, isLoading };
 }

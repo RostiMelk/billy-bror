@@ -22,6 +22,9 @@ export const AllTrips = ({ entries, onEdit }: AllTripsProps) => {
             <TripRow entry={entry} onEdit={onEdit} />
           </motion.div>
         ))}
+        <p className="text-center text-sm text-muted-foreground pt-6">
+          Viser resultater for de siste 7 dagene
+        </p>
       </AnimatePresence>
     </ol>
   );
