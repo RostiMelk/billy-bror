@@ -10,7 +10,6 @@ interface AllTripsProps {
   onEdit: (entry: ResolvedEntryDocument) => void;
   loadMore: () => void;
   hasNextPage: boolean;
-  isLoading: boolean;
 }
 
 export const AllTrips = ({
@@ -29,17 +28,13 @@ export const AllTrips = ({
   });
 
   React.useEffect(() => {
-    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
+    const lastItem = rowVirtualizer.getVirtualItems().at(-1);
 
     if (!lastItem) {
       return;
     }
 
-    if (
-      lastItem.index >= entries.length - 1 &&
-      hasNextPage &&
-      !rowVirtualizer.options.count
-    ) {
+    if (lastItem.index === entries.length - 1) {
       loadMore();
     }
   }, [hasNextPage, entries.length, loadMore, rowVirtualizer]);
@@ -57,21 +52,30 @@ export const AllTrips = ({
           {rowVirtualizer.getVirtualItems().map((virtualRow) => {
             const entry = entries[virtualRow.index];
             return (
-              <motion.div
+              <motion.li
                 key={virtualRow.index}
                 className="group"
                 // initial={{ opacity: 0, height: 0, scale: 0 }}
                 // animate={{ opacity: 1, height: "auto", scale: 1 }}
                 // exit={{ opacity: 0, height: 0, scale: 0 }}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: `${virtualRow.size}px`,
+                  transform: `translateY(${virtualRow.start}px)`,
+                }}
               >
+                {virtualRow.index}
                 {entry ? (
                   <TripRow entry={entry} onEdit={onEdit} />
                 ) : (
                   hasNextPage && (
-                    <LoaderCircleIcon className="animate-spin text-muted-foreground mx-auto h-[65px]" />
+                    <LoaderCircleIcon className="animate-spin text-muted-foreground mx-auto h-full" />
                   )
                 )}
-              </motion.div>
+              </motion.li>
             );
           })}
         </AnimatePresence>

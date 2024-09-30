@@ -155,7 +155,6 @@ export default function Home() {
                   onEdit={handleEditEntry}
                   loadMore={loadMore}
                   hasNextPage={hasNextPage}
-                  isLoading={isLoading}
                 />
               </motion.div>
             )}
