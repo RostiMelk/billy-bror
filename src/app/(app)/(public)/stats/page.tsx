@@ -11,7 +11,7 @@ import {
   processEntriesForTripsChart,
   calculateStats,
 } from "@/lib/process-entries-for-charts";
-import { pluralize } from "@/lib/utils";
+import { capitalizeName, pluralize } from "@/lib/utils";
 
 export default async function Stats() {
   const allEntries = await getAllCompletedEntries();
@@ -48,7 +48,9 @@ export default async function Stats() {
                 <Avatar className="mr-3">
                   <AvatarImage src={walker.user.image ?? undefined} />
                 </Avatar>
-                <p className="font-medium truncate">{walker.user.name}</p>
+                <p className="font-medium truncate">
+                  {capitalizeName(walker.user.name)}
+                </p>
 
                 <span className="text-sm font-semibold text-secondary-foreground ml-auto">
                   {walker.trips} {pluralize(walker.trips, "tur", "turer")}
