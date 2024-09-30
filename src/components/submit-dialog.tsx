@@ -55,7 +55,7 @@ interface SubmitDialogProps {
   onSubmit: () => void;
 }
 
-const USER_QUERY = `*[_type== "user"] | order(name asc)`;
+const USER_QUERY = `*[_type== "user"] | order(lower(title) asc)`;
 
 const formatTimeToHtmlInput = (date?: string) => {
   return new Date(date || new Date()).toLocaleTimeString([], {
