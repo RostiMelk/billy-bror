@@ -12,7 +12,7 @@ import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import groq from "groq";
-import { hashEmail, userToReference } from "./utils";
+import { userToReference } from "./utils";
 
 const ENTRY_PROJECTION = groq`{ ..., users[]->, likes[]-> }`;
 
