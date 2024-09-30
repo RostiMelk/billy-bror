@@ -7,7 +7,6 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "A poop tracker for the modern age",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
     icons: [
       {
         src: "/apple-icon.png",
