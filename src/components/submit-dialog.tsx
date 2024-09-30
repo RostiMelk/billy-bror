@@ -130,7 +130,7 @@ export const SubmitDialog = ({
       poops: entry?.poops || 0,
       startTime: formatTimeToHtmlInput(entry?.startTime),
       endTime: formatTimeToHtmlInput(entry?.endTime),
-      users: entry?.users?.map(userToReference) || [],
+      users: entry?.users?.map(userToReference),
     });
   }, [entry, open, form]);
 
