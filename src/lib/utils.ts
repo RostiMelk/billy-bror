@@ -20,3 +20,10 @@ export function firstName(name?: string): string {
     name.split(" ")[0].charAt(0).toUpperCase() + name.split(" ")[0].slice(1)
   );
 }
+
+export function humanJoin(arr?: string[]): string {
+  if (!arr || arr.length === 0) return "";
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return `${arr[0]} og ${arr[1]}`;
+  return `${arr.slice(0, -1).join(", ")}, og ${arr[arr.length - 1]}`;
+}

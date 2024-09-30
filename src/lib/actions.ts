@@ -163,6 +163,27 @@ export async function likeEntry(entryId: string) {
     autoGenerateArrayKeys: true,
   });
 }
+export async function appendMyselfToEntry(entryId: string) {
+  const userRef = await getUserRef();
+
+  const existingEntry = await serverClient.getDocument<EntryDocument>(entryId);
+  if (!existingEntry) {
+    throw new Error("Entry not found");
+  }
+
+  const isUserAlreadyInEntry = existingEntry?.users?.some(
+    (user) => user._ref === userRef._ref,
+  );
+  if (isUserAlreadyInEntry) {
+    throw new Error("User already in entry");
+  }
+
+  return serverClient
+    .patch(entryId)
+    .setIfMissing({ users: [] })
+    .append("users", [userRef])
+    .commit({ autoGenerateArrayKeys: true });
+}
 
 export async function revalidatePaths() {
   await Promise.all([revalidatePath("/"), revalidatePath("/stats")]);

@@ -1,6 +1,6 @@
 "use client";
 
-import { startEntry } from "@/lib/actions";
+import { startEntry, appendMyselfToEntry } from "@/lib/actions";
 import type { ResolvedEntryDocument } from "@/types/entry";
 import { Button } from "@/components/ui/button";
 import { useCallback, useEffect, useState } from "react";
@@ -14,7 +14,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useEntrySubscription } from "@/hooks/useEntrySubscription";
 import { useIsPwa } from "@/hooks/useIsPwa";
-import { cn, firstName } from "@/lib/utils";
+import { cn, firstName, humanJoin } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 
 const motionProps = {
@@ -54,16 +54,27 @@ export default function Home() {
     setEditingEntry(null);
   }, [setActiveEntry]);
 
+  const handleAppendMyselfToEntry = useCallback(() => {
+    if (!activeEntry) return;
+    appendMyselfToEntry(activeEntry._id);
+    toast("Du er lagt til på turen 💚", {
+      description: "Kos dere ute!",
+    });
+  }, [activeEntry]);
+
   useEffect(() => {
     const visibilityChangeHandler = async () => {
       if (document.visibilityState !== "visible") return;
 
-      const walker = activeEntry?.users?.[0];
-      const isMe = walker?.email === session.data?.user?.email;
+      const sessionUserIsWalking = activeEntry?.users?.some(
+        (user) => user.email === session.data?.user?.email,
+      );
+      const walkerNames = activeEntry?.users?.map((w) => firstName(w.name));
+      const canJoin = !sessionUserIsWalking && activeEntry;
 
-      const activeTripMessage = isMe
+      const activeTripMessage = sessionUserIsWalking
         ? "Håper du har hatt en fin tur! 🐕‍🦺"
-        : `${firstName(walker?.name)} er på tur! 🤩`;
+        : `${humanJoin(walkerNames)} er på tur! 🤩`;
 
       const message = activeEntry
         ? activeTripMessage
@@ -71,7 +82,12 @@ export default function Home() {
       const description = activeEntry
         ? "Trykk på stopp for å avslutte turen"
         : "Trykk på start for å begynne en ny tur";
-      toast(message, { description });
+      const action = canJoin && {
+        label: "Jeg er med!",
+        onClick: handleAppendMyselfToEntry,
+      };
+
+      toast(message, { description, action });
     };
 
     window.addEventListener("visibilitychange", visibilityChangeHandler);
