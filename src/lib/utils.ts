@@ -16,6 +16,14 @@ export function hashEmail(email?: string): string {
   return Buffer.from(email).toString("base64").replace(/[+/=]/g, "");
 }
 
+export function capitalizeName(name?: string): string {
+  if (!name) return "";
+  return name
+    .split(" ")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export function firstName(name?: string): string {
   if (!name) return "";
   return (

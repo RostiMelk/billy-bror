@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { serverClient } from "@/lib/server-client";
 import type { UserWhitelist } from "@/types/user-whitelist";
 import type { User } from "@/types/user";
-import { hashEmail } from "@/lib/utils";
+import { hashEmail, capitalizeName } from "@/lib/utils";
 
 const USER_WHITELIST_QUERY = `*[_type == "userWhitelist" && email == $email][0]`;
 
@@ -30,6 +30,14 @@ const handler = NextAuth({
     GoogleProvider({
       clientId: process.env.NEXT_PRIVATE_GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.NEXT_PRIVATE_GOOGLE_CLIENT_SECRET as string,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: capitalizeName(profile.name),
+          email: profile.email,
+          image: profile.picture,
+        };
+      },
     }),
   ],
   callbacks: {
