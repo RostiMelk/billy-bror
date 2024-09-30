@@ -11,10 +11,8 @@ import {
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
-import { saveAs } from "file-saver";
 import groq from "groq";
-import { hashEmail } from "./utils";
-import { createSiriShortcut } from "./siri-shortcut";
+import { hashEmail, userToReference } from "./utils";
 
 const ENTRY_PROJECTION = groq`{ ..., users[]->, likes[]-> }`;
 
@@ -23,10 +21,7 @@ async function getUserRef(): Promise<UserReference> {
   if (!session?.user) {
     throw new Error("User not authenticated");
   }
-  return {
-    _type: "reference",
-    _ref: hashEmail(session.user.email),
-  };
+  return userToReference(session.user);
 }
 
 export async function getActiveEntry(): Promise<ResolvedEntryDocument | null> {
@@ -126,7 +121,9 @@ export async function updateEntry(entryId: string, entry: AutoEntry) {
     status: "completed",
   };
 
-  await serverClient.createOrReplace(updatedEntry);
+  await serverClient.createOrReplace(updatedEntry, {
+    autoGenerateArrayKeys: true,
+  });
   revalidatePaths();
 }
 

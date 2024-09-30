@@ -29,7 +29,7 @@ import { NumberInput } from "@/components/ui/number-input";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useClient } from "@/hooks/useClient";
 import type { User } from "@/types/user";
-import { firstName, hashEmail } from "@/lib/utils";
+import { firstName, hashEmail, userToReference } from "@/lib/utils";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import type { AvatarProps } from "@radix-ui/react-avatar";
 import {
@@ -49,6 +49,8 @@ interface SubmitDialogProps {
   onClose: () => void;
   onSubmit: () => void;
 }
+
+const USER_QUERY = `*[_type== "user"] | order(name asc)`;
 
 const formatTimeToHtmlInput = (date?: string) => {
   return new Date(date || new Date()).toLocaleTimeString([], {
@@ -90,9 +92,7 @@ export const SubmitDialog = ({
 
   const [isUserSelectOpen, setIsUserSelectOpen] = useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
-  const { data: allUsers } = useClient<User[]>(
-    `*[_type== "user"] | order(name)`,
-  );
+  const { data: allUsers } = useClient<User[]>(USER_QUERY);
   const allUserOptions = useMemo(() => {
     return (
       allUsers?.map((user) => ({
@@ -125,10 +125,7 @@ export const SubmitDialog = ({
       poops: entry?.poops || 0,
       startTime: formatTimeToHtmlInput(entry?.startTime),
       endTime: formatTimeToHtmlInput(entry?.endTime),
-      users: entry?.users?.map((user) => ({
-        _type: "reference",
-        _ref: hashEmail(user.email),
-      })),
+      users: entry?.users?.map(userToReference) || [],
     });
   }, [entry, open, form]);
 

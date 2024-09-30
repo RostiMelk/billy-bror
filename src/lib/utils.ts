@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { User } from "@/types/user";
+import type { UserReference } from "@/types/entry";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -26,4 +28,11 @@ export function humanJoin(arr?: string[]): string {
   if (arr.length === 1) return arr[0];
   if (arr.length === 2) return `${arr[0]} og ${arr[1]}`;
   return `${arr.slice(0, -1).join(", ")}, og ${arr[arr.length - 1]}`;
+}
+
+export function userToReference(user: User): UserReference {
+  return {
+    _type: "reference",
+    _ref: hashEmail(user.email),
+  };
 }
