@@ -29,7 +29,12 @@ import { NumberInput } from "@/components/ui/number-input";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useClient } from "@/hooks/useClient";
 import type { User } from "@/types/user";
-import { firstName, hashEmail, userToReference } from "@/lib/utils";
+import {
+  capitalizeName,
+  firstName,
+  hashEmail,
+  userToReference,
+} from "@/lib/utils";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import type { AvatarProps } from "@radix-ui/react-avatar";
 import {
@@ -96,7 +101,7 @@ export const SubmitDialog = ({
   const allUserOptions = useMemo(() => {
     return (
       allUsers?.map((user) => ({
-        label: user.name,
+        label: capitalizeName(user.name),
         shortLabel: firstName(user.name),
         value: hashEmail(user.email),
         icon: (props: AvatarProps) => (
