@@ -105,6 +105,11 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
+                      className={cn(
+                        "text-muted-foreground",
+                        optimisticEntry.likes?.length &&
+                          "text-primary font-semibold",
+                      )}
                     >
                       {optimisticEntry.likes?.length || "0"}
                     </motion.span>
