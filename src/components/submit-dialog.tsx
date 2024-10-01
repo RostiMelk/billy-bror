@@ -13,7 +13,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { addManualEntry, deleteEntry, updateEntry } from "@/lib/actions";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
+import { LoaderPinwheelIcon } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -383,7 +383,9 @@ export const SubmitDialog = ({
               )}
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading && (
+                  <LoaderPinwheelIcon className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Lagre tur
               </Button>
             </footer>

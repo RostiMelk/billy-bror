@@ -162,7 +162,17 @@ export function calculateStats(entries: ResolvedEntryDocument[]): {
   }, 0);
 
   const successRate =
-    outdoorTripsWithToiletVisits.length / tripsWithToiletVisits.length;
+    tripsWithToiletVisits.length === 0
+      ? 1
+      : outdoorTripsWithToiletVisits.length / tripsWithToiletVisits.length;
+
+  console.log(
+    "successRate",
+    successRate,
+    outdoorTripsWithToiletVisits.length,
+    tripsWithToiletVisits.length,
+  );
+
   const outdoorPercentage = totalOutsideTrips / totalTrips;
 
   const totalDuration = outdoorTrips.reduce((sum, entry) => {

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { StatsContent } from "@/components/stats-content";
-import { LoaderCircleIcon } from "lucide-react";
+import { LoaderPinwheelIcon } from "lucide-react";
 
 export default async function Stats() {
   return (
@@ -12,8 +12,8 @@ export default async function Stats() {
 
 function Loader() {
   return (
-    <div className="h-[100dvh] grid place-items-center">
-      <LoaderCircleIcon className="animate-spin size-8 text-muted-foreground" />
+    <div className="h-[100dvh] grid place-items-center animate-rainbow">
+      <LoaderPinwheelIcon className="animate-spin size-8" />
     </div>
   );
 }
