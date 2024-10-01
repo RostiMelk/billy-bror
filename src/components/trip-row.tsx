@@ -65,7 +65,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
 
   // When the entry is outside, we show a heart icon, otherwise a thumbs down
   // They're both treated as a like action.
-  const ReactionIcon = isOutside ? HeartIcon : ThumbsDownIcon;
+  const ReactionIcon = motion(isOutside ? HeartIcon : ThumbsDownIcon);
 
   return (
     <li>
@@ -118,6 +118,10 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
                     </motion.span>
                   </AnimatePresence>
                   <ReactionIcon
+                    animate={{
+                      scale: reacted ? [1, 1.2, 1] : 1,
+                      rotate: reacted ? [0, 10, 0] : 0,
+                    }}
                     className={cn(
                       "w-4 h-4 text-muted-foreground",
                       reacted && isOutside && "text-red-500 fill-red-500",
