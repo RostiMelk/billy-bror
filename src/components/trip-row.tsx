@@ -96,7 +96,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={handleLike}
-                  className="gap-2 tabular-nums"
+                  className="tabular-nums"
                 >
                   <AnimatePresence mode="wait">
                     <motion.span
@@ -105,13 +105,9 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
-                      className={cn(
-                        "text-muted-foreground",
-                        optimisticEntry.likes?.length &&
-                          "text-primary font-semibold",
-                      )}
+                      className="text-primary font-semibold"
                     >
-                      {optimisticEntry.likes?.length || "0"}
+                      {optimisticEntry.likes?.length || ""}
                     </motion.span>
                   </AnimatePresence>
                   <HeartIcon
@@ -122,7 +118,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
                   />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent sideOffset={8}>
+              <TooltipContent sideOffset={8} align="end">
                 <p className="text-xs">
                   {optimisticEntry.likes
                     ?.map((like) => firstName(like.name))
