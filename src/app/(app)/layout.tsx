@@ -1,7 +1,5 @@
 import { EntryBanner } from "@/components/entry-banner";
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import { LoaderCircleIcon } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Billy Bror",
@@ -24,18 +22,8 @@ export default async function AppLayout({
 }>) {
   return (
     <>
-      <Suspense fallback={<Loader />}>
-        <EntryBanner />
-        <div className="container grid max-w-xl">{children}</div>
-      </Suspense>
+      <EntryBanner />
+      <div className="container grid max-w-xl">{children}</div>
     </>
-  );
-}
-
-function Loader() {
-  return (
-    <div className="h-[100dvh] grid place-items-center">
-      <LoaderCircleIcon className="animate-spin size-8 text-muted-foreground" />
-    </div>
   );
 }
