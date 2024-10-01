@@ -4,8 +4,6 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
 } from "@/components/ui/chart";
 import {
   BarChart,
@@ -18,6 +16,7 @@ import {
 
 type ChartData = {
   date: string;
+  displayDate: string;
   trips: number;
 };
 
@@ -34,7 +33,7 @@ export function ChartTripsPerDay({ chartData }: { chartData: ChartData[] }) {
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
+          <XAxis dataKey="displayDate" />
           <YAxis width={20} />
           <ChartTooltip content={<ChartTooltipContent />} />
           <Bar dataKey="trips" fill="var(--color-trips)" />

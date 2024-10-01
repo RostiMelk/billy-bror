@@ -2,9 +2,8 @@ import type { ResolvedEntryDocument, Location } from "@/types/entry";
 import type { User } from "@/types/user";
 
 const dateOptions: Intl.DateTimeFormatOptions = {
-  year: "2-digit",
+  day: "numeric",
   month: "short",
-  day: "2-digit",
 };
 
 /**
@@ -15,10 +14,7 @@ export function processEntriesForPoopPeeChart(
 ) {
   const dailyStats = entries.reduce(
     (acc, entry) => {
-      const date = new Date(entry.startTime).toLocaleDateString(
-        "no-NO",
-        dateOptions,
-      );
+      const date = new Date(entry.startTime).toISOString().split("T")[0];
       if (!acc[date]) {
         acc[date] = {
           outsidePoops: 0,
@@ -54,12 +50,12 @@ export function processEntriesForPoopPeeChart(
   );
 
   return Object.entries(dailyStats)
-    .map(([date, stats]) => ({ date, ...stats }))
-    .sort(
-      (a, b) =>
-        new Date(a.date.split(".").reverse().join("-")).getTime() -
-        new Date(b.date.split(".").reverse().join("-")).getTime(),
-    );
+    .map(([date, stats]) => ({
+      date,
+      displayDate: new Date(date).toLocaleDateString("no-NO", dateOptions),
+      ...stats,
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
 }
 
 /**
@@ -70,10 +66,7 @@ export function processEntriesForTripsChart(entries: ResolvedEntryDocument[]) {
     .filter((entry) => entry.location === "outside")
     .reduce(
       (acc, entry) => {
-        const date = new Date(entry.startTime).toLocaleDateString(
-          "no-NO",
-          dateOptions,
-        );
+        const date = new Date(entry.startTime).toISOString().split("T")[0];
         acc[date] = (acc[date] || 0) + 1;
         return acc;
       },
@@ -81,12 +74,12 @@ export function processEntriesForTripsChart(entries: ResolvedEntryDocument[]) {
     );
 
   return Object.entries(dailyTrips)
-    .map(([date, trips]) => ({ date, trips }))
-    .sort(
-      (a, b) =>
-        new Date(a.date.split(".").reverse().join("-")).getTime() -
-        new Date(b.date.split(".").reverse().join("-")).getTime(),
-    );
+    .map(([date, trips]) => ({
+      date,
+      displayDate: new Date(date).toLocaleDateString("no-NO", dateOptions),
+      trips,
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
 }
 
 /**

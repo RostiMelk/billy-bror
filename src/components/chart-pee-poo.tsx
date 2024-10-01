@@ -18,6 +18,7 @@ import {
 
 type ChartData = {
   date: string;
+  displayDate: string;
   outsidePoops: number;
   outsidePees: number;
   insidePoops: number;
@@ -49,7 +50,7 @@ export function ChartPeePoo({ chartData }: { chartData: ChartData[] }) {
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
+          <XAxis dataKey="displayDate" />
           <YAxis width={20} />
           <ChartTooltip content={<ChartTooltipContent />} />
           <ChartLegend content={<ChartLegendContent />} />
