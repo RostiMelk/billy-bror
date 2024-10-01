@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { StatsContent } from "@/components/stats-content";
 import { LoaderPinwheelIcon } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function Stats() {
   return (
     <Suspense fallback={<Loader />}>
