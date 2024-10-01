@@ -1,5 +1,4 @@
-import { useCallback, useMemo } from "react";
-import { useOptimistic } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { HeartIcon, ThumbsDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -27,24 +26,12 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
   const duration = useDuration(entry.startTime, entry.endTime);
   const isOutside = entry.location === "outside";
   const { data: session } = useSession();
-
-  const [optimisticEntry, addOptimisticEntry] = useOptimistic(
-    entry,
-    (currentEntry, optimisticReaction: boolean) => ({
-      ...currentEntry,
-      likes:
-        optimisticReaction && session?.user
-          ? [...(currentEntry.likes || []), session.user]
-          : (currentEntry.likes || []).filter(
-              (like) => like.email !== session?.user?.email,
-            ),
-    }),
-  );
+  const [optimisticEntry, setOptimisticEntry] = useState(entry);
 
   const reacted = useMemo(() => {
     const email = session?.user?.email;
     if (!email) return false;
-    return optimisticEntry.likes?.some((like) => like.email === email);
+    return optimisticEntry.likes?.some((like) => like.email === email) ?? false;
   }, [optimisticEntry.likes, session]);
 
   const handleReact = useCallback(
@@ -53,10 +40,18 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
       const user = session?.user;
       if (!user) return;
 
-      addOptimisticEntry(!reacted);
+      const newLikes = reacted
+        ? optimisticEntry.likes?.filter((like) => like.email !== user.email) ||
+          []
+        : [...(optimisticEntry.likes || []), user];
+
+      setOptimisticEntry((prev) => ({
+        ...prev,
+        likes: newLikes,
+      }));
       await likeEntry(entry._id);
     },
-    [entry._id, reacted, session, addOptimisticEntry],
+    [entry._id, reacted, session, optimisticEntry.likes],
   );
 
   const handleEdit = useCallback(() => {
@@ -65,7 +60,9 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
 
   // When the entry is outside, we show a heart icon, otherwise a thumbs down
   // They're both treated as a like action.
-  const ReactionIcon = motion(isOutside ? HeartIcon : ThumbsDownIcon);
+  const ReactionIcon = isOutside ? HeartIcon : ThumbsDownIcon;
+
+  console.log("likes", reacted);
 
   return (
     <li>
@@ -101,6 +98,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
                   size="sm"
                   onClick={handleReact}
                   className="tabular-nums"
+                  key={optimisticEntry.likes?.length}
                 >
                   <AnimatePresence mode="wait">
                     <motion.span
@@ -118,16 +116,11 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
                     </motion.span>
                   </AnimatePresence>
                   <ReactionIcon
-                    animate={{
-                      scale: reacted ? [1, 1.2, 1] : 1,
-                      rotate: reacted ? [0, 10, 0] : 0,
-                    }}
+                    key={optimisticEntry.likes?.length}
                     className={cn(
                       "w-4 h-4 text-muted-foreground",
                       reacted && isOutside && "text-red-500 fill-red-500",
-                      reacted &&
-                        !isOutside &&
-                        "text-yellow-500 fill-yellow-500",
+                      reacted && !isOutside && "text-amber-500 fill-amber-500",
                     )}
                   />
                 </Button>
