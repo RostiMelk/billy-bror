@@ -58,10 +58,10 @@ interface SubmitDialogProps {
 const USER_QUERY = `*[_type== "user"] | order(lower(title) asc)`;
 
 const formatTimeToHtmlInput = (date?: string) => {
-  return new Date(date || new Date()).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const dateObj = date ? new Date(date) : new Date();
+  const hours = dateObj.getHours().toString().padStart(2, "0");
+  const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
 };
 
 const formatTimeToDate = (time?: string, date?: string) => {
