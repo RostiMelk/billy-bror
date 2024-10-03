@@ -49,7 +49,6 @@ export function useEntrySubscription() {
           if (newEntry.status === "completed") {
             setActiveEntry(null);
           } else {
-            setActiveEntry(newEntry);
             const fullEntry = await client.fetch(
               groq`*[_type == "entry" && _id == $id][0] ${ENTRY_PROJECTION}`,
               { id: newEntry._id },
