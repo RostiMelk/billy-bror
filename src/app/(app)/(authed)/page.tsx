@@ -90,14 +90,16 @@ export default function Home() {
       toast(message, { description, action });
     };
 
+    window.addEventListener("load", visibilityChangeHandler);
     window.addEventListener("visibilitychange", visibilityChangeHandler);
     document.body.style.overflow = "hidden";
 
     return () => {
+      window.removeEventListener("load", visibilityChangeHandler);
       window.removeEventListener("visibilitychange", visibilityChangeHandler);
       document.body.style.overflow = "auto";
     };
-  }, [activeEntry, session]);
+  }, [activeEntry, session, handleAppendMyselfToEntry]);
 
   const handleStartEntry = useCallback(async () => {
     const startTime = new Date().toISOString();
