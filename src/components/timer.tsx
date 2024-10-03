@@ -17,7 +17,7 @@ export const Timer = ({ entry }: TimerProps) => {
   return (
     <div className="flex flex-col items-center">
       <motion.p
-        className="flex items-center gap-1.5 mb-4 text-sm flex-wrap justify-center max-w-sm min-h-9"
+        className="flex items-center gap-1.5 mb-4 text-sm font-medium flex-wrap justify-center max-w-sm min-h-9"
         variants={{
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
@@ -42,7 +42,7 @@ export const Timer = ({ entry }: TimerProps) => {
             {index === array.length - 2 && " og "}
           </>
         ))}
-        <span className="font-medium">er på tur</span>
+        <span>er på tur</span>
       </motion.p>
 
       <p className="text-7xl tabular-nums font-medium mb-4">{elapsedTime}</p>
