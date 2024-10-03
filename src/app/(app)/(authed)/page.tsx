@@ -124,7 +124,7 @@ export default function Home() {
     }
   }, [setActiveEntry, session]);
 
-  if (isLoading) return null;
+  // if (isLoading) return null;
 
   return (
     <>
