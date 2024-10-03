@@ -146,7 +146,7 @@ export default function Home() {
           <AnimatePresence mode="wait">
             {activeEntry ? (
               <motion.div key="timer" {...motionProps}>
-                <Timer startTime={activeEntry.startTime} />
+                <Timer entry={activeEntry} />
               </motion.div>
             ) : (
               <motion.div key="lastTrip" {...motionProps}>

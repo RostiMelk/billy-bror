@@ -62,8 +62,6 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
   // They're both treated as a like action.
   const ReactionIcon = isOutside ? HeartIcon : ThumbsDownIcon;
 
-  console.log("likes", reacted);
-
   return (
     <li>
       <button
