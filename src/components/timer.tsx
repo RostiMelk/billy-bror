@@ -24,7 +24,7 @@ export const Timer = ({ entry }: TimerProps) => {
         }}
         initial="hidden"
         animate={hasUsers ? "visible" : "hidden"}
-        transition={{ delay: 0.5 }}
+        transition={{ delay: 0.2 }}
       >
         {entry?.users?.map((user, index, array) => (
           <>
