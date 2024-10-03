@@ -110,7 +110,6 @@ export default function Home() {
       location: "outside",
       users: session.data?.user ? [{ ...session.data.user }] : [],
     };
-
     setActiveEntry(tempEntry);
 
     try {
