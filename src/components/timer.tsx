@@ -22,7 +22,9 @@ export const Timer = ({ entry }: TimerProps) => {
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
         }}
+        initial="hidden"
         animate={hasUsers ? "visible" : "hidden"}
+        transition={{ delay: 0.5 }}
       >
         {entry?.users?.map((user, index, array) => (
           <>
@@ -43,7 +45,7 @@ export const Timer = ({ entry }: TimerProps) => {
         <span className="font-medium">er på tur</span>
       </motion.p>
 
-      <p className="text-7xl tabular-nums font-medium">{elapsedTime}</p>
+      <p className="text-7xl tabular-nums font-medium mb-4">{elapsedTime}</p>
     </div>
   );
 };
