@@ -185,7 +185,7 @@ export default function Home() {
           ) : (
             <>
               <p className="text-sm text-muted-foreground font-medium">
-                Er du og Billy klare for en tur?
+                Er du og Billy klare for tur?
               </p>
               <Button
                 size="lg"
