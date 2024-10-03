@@ -40,7 +40,7 @@ export const Timer = ({ entry }: TimerProps) => {
             {index === array.length - 2 && " og "}
           </>
         ))}
-        <span>er på tur</span>
+        <span className="font-medium">er på tur</span>
       </motion.p>
 
       <p className="text-7xl tabular-nums font-medium">{elapsedTime}</p>
