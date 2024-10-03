@@ -12,6 +12,7 @@ interface TimerProps {
 
 export const Timer = ({ entry }: TimerProps) => {
   const elapsedTime = useTimer(entry.startTime);
+  const hasUsers = Boolean(entry?.users?.length);
 
   return (
     <div className="flex flex-col items-center">
@@ -21,7 +22,7 @@ export const Timer = ({ entry }: TimerProps) => {
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
         }}
-        animate={entry?.users?.length ? "visible" : "hidden"}
+        animate={hasUsers ? "visible" : "hidden"}
       >
         {entry?.users?.map((user, index, array) => (
           <>
