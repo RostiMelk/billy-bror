@@ -22,7 +22,6 @@ const motionProps = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -20 },
-  transition: { delay: 0.2 },
 };
 
 export default function Home() {
@@ -148,7 +147,7 @@ export default function Home() {
         </Header>
 
         <main className="overflow-auto fade grid items-center mt-1 mb-3 before:h-6">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             {activeEntry ? (
               <motion.div key="timer" {...motionProps}>
                 <Timer entry={activeEntry} />
