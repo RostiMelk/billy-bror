@@ -5,7 +5,8 @@ import { useTimer } from "../hooks/useTimer";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { firstName } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+
 interface TimerProps {
   entry: ResolvedEntryDocument;
 }
@@ -25,22 +26,29 @@ export const Timer = ({ entry }: TimerProps) => {
         initial="hidden"
         animate={hasUsers ? "visible" : "hidden"}
       >
-        {entry?.users?.map((user, index, array) => (
-          <>
-            <Badge
-              variant="outline"
+        <AnimatePresence initial={false}>
+          {entry?.users?.map((user, index, array) => (
+            <motion.span
               key={user.email}
-              className="text-md gap-1 pr-1.5"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0 }}
             >
-              <Avatar className="size-6 m-0.5">
-                <AvatarImage src={user.image ?? undefined} />
-              </Avatar>
-              {firstName(user.name)}
-            </Badge>
-            {index < array.length - 2 && ", "}
-            {index === array.length - 2 && " og "}
-          </>
-        ))}
+              <Badge
+                variant="outline"
+                key={user.email}
+                className="text-md gap-1 pr-1.5"
+              >
+                <Avatar className="size-6 m-0.5">
+                  <AvatarImage src={user.image ?? undefined} />
+                </Avatar>
+                {firstName(user.name)}
+              </Badge>
+              {index < array.length - 2 && ", "}
+              {index === array.length - 2 && " og "}
+            </motion.span>
+          ))}
+        </AnimatePresence>
         <span>er på tur</span>
       </motion.p>
 
