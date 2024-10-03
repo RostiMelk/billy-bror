@@ -36,8 +36,8 @@ export const Timer = ({ entry }: TimerProps) => {
               className="flex items-center"
             >
               <Badge
-                variant="outline"
                 key={user.email}
+                variant="outline"
                 className="text-md gap-1 pr-1.5 mx-0.5"
               >
                 <Avatar className="size-6">
