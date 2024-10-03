@@ -39,7 +39,7 @@ export const Timer = ({ entry }: TimerProps) => {
                 key={user.email}
                 className="text-md gap-1 pr-1.5"
               >
-                <Avatar className="size-6 m-0.5">
+                <Avatar className="size-6">
                   <AvatarImage src={user.image ?? undefined} />
                 </Avatar>
                 {firstName(user.name)}

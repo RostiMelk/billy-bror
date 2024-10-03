@@ -16,6 +16,7 @@ import { useEntrySubscription } from "@/hooks/useEntrySubscription";
 import { useIsPwa } from "@/hooks/useIsPwa";
 import { cn, firstName, humanJoin } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { QuickStats } from "@/components/quick-stats";
 
 const motionProps = {
   initial: { opacity: 0, y: 20 },
@@ -127,7 +128,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="text-center grid grid-rows-[auto,1fr,auto] h-[100dvh] p-4 gap-6">
+      <div className="text-center grid grid-rows-[auto,1fr,auto] h-[100dvh] p-4">
         <Header>
           <Button variant="outline" size="sm" asChild>
             <Link href="/stats">Statistikk</Link>
@@ -153,6 +154,7 @@ export default function Home() {
               </motion.div>
             ) : (
               <motion.div key="lastTrip" {...motionProps}>
+                <QuickStats entries={allEntries} />
                 <AllTrips entries={allEntries} onEdit={handleEditEntry} />
               </motion.div>
             )}
@@ -160,7 +162,7 @@ export default function Home() {
         </main>
 
         <footer
-          className={cn("flex flex-col gap-3", {
+          className={cn("flex flex-col gap-3 mt-6", {
             "pb-6": isPwa,
           })}
         >
