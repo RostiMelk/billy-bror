@@ -183,7 +183,7 @@ export default function Home() {
           ) : (
             <>
               <p className="text-sm text-muted-foreground font-medium">
-                Trykk på knappen for å starte en ny tur
+                Er du og Billy klare for en tur?
               </p>
               <Button
                 size="lg"
