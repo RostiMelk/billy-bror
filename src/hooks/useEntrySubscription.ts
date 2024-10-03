@@ -100,7 +100,7 @@ export function useEntrySubscription() {
       allEntriesSubscription.unsubscribe();
       window.removeEventListener("visibilitychange", visibilityChangeHandler);
     };
-  }, [fetchEntries, weekAgo]);
+  }, [fetchEntries, weekAgo, activeEntry]);
 
   return { activeEntry, setActiveEntry, allEntries, isLoading };
 }
