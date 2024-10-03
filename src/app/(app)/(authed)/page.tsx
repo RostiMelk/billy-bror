@@ -146,7 +146,7 @@ export default function Home() {
           )}
         </Header>
 
-        <main className="overflow-auto fade grid items-center mt-2 mb-4">
+        <main className="overflow-auto fade grid items-center mt-1 mb-4">
           <AnimatePresence mode="wait">
             {activeEntry ? (
               <motion.div key="timer" {...motionProps}>
