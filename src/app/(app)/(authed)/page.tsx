@@ -162,7 +162,7 @@ export default function Home() {
         </main>
 
         <footer
-          className={cn("flex flex-col gap-3 mt-6", {
+          className={cn("flex flex-col gap-3 mt-4", {
             "pb-6": isPwa,
           })}
         >
