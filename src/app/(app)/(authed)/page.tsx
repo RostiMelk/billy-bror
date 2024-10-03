@@ -146,6 +146,7 @@ export default function Home() {
 
         <motion.main
           className="overflow-auto fade grid items-center mt-1 mb-3 before:h-6"
+          initial={{ opacity: 0 }}
           animate={{ opacity: isLoading ? 0 : 1 }}
         >
           <AnimatePresence mode="wait">
