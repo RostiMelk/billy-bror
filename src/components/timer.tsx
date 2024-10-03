@@ -18,7 +18,7 @@ export const Timer = ({ entry }: TimerProps) => {
   return (
     <div className="flex flex-col items-center">
       <motion.p
-        className="flex items-center gap-1.5 mb-4 text-sm font-medium flex-wrap justify-center max-w-sm min-h-9"
+        className="flex items-center mb-4 text-sm font-medium flex-wrap justify-center max-w-sm min-h-9"
         variants={{
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
@@ -33,23 +33,24 @@ export const Timer = ({ entry }: TimerProps) => {
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0 }}
+              className="flex items-center"
             >
               <Badge
                 variant="outline"
                 key={user.email}
-                className="text-md gap-1 pr-1.5"
+                className="text-md gap-1 pr-1.5 mx-0.5"
               >
                 <Avatar className="size-6">
                   <AvatarImage src={user.image ?? undefined} />
                 </Avatar>
                 {firstName(user.name)}
               </Badge>
-              {index < array.length - 2 && ", "}
-              {index === array.length - 2 && " og "}
+              {index < array.length - 2 && <span>,&nbsp;</span>}
+              {index === array.length - 2 && <span>&nbsp;og&nbsp;</span>}
             </motion.span>
           ))}
         </AnimatePresence>
-        <span>er på tur</span>
+        <span>&nbsp;er på tur</span>
       </motion.p>
 
       <p className="text-7xl tabular-nums font-medium mb-4">{elapsedTime}</p>
