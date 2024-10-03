@@ -2,7 +2,12 @@ import { useTimeAgo } from "@/hooks/useTimeAgo";
 import type { ResolvedEntryDocument } from "@/types/entry";
 import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
-import { FootprintsIcon, AwardIcon, TreePineIcon } from "lucide-react";
+import {
+  FootprintsIcon,
+  AwardIcon,
+  TreePineIcon,
+  TimerIcon,
+} from "lucide-react";
 import { calculateStats } from "@/lib/process-entries-for-charts";
 import { firstName } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -11,8 +16,7 @@ interface QuickStatsProps {
   entries: ResolvedEntryDocument[];
 }
 
-const badgeStyle =
-  "gap-1.5 py-2 px-3 grid grid-cols-[1fr,auto,1fr] items-center truncate";
+const badgeStyle = "shrink-0 gap-1.5 py-2 px-3 items-center truncate";
 
 export const QuickStats = ({ entries }: QuickStatsProps) => {
   const entriesToday = useMemo(() => {
@@ -36,7 +40,7 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
   }, [entriesToday]);
 
   return (
-    <section className="grid grid-cols-2 items-center gap-2.5 mb-6 justify-center flex-wrap">
+    <section className="flex items-center gap-2.5 mb-6 flex-wrap">
       <Badge className={cn("bg-green-200 text-green-950", badgeStyle)}>
         <FootprintsIcon size={16} />
         {lastTripEnded}
@@ -44,7 +48,7 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
 
       <Badge className={cn("bg-purple-200 text-purple-950", badgeStyle)}>
         <FootprintsIcon size={16} />
-        {entriesToday.length} turer i dag
+        {todaysStats.totalTrips} turer i dag
       </Badge>
 
       {todaysStats.topWalkers.length > 0 && (
@@ -57,6 +61,11 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
       <Badge className={cn("bg-blue-200 text-blue-950", badgeStyle)}>
         <TreePineIcon size={16} />
         {(todaysStats?.successRate * 100).toFixed(0)}% suksess
+      </Badge>
+
+      <Badge className={cn("bg-orange-200 text-orange-950", badgeStyle)}>
+        <TimerIcon size={16} />
+        {todaysStats?.averageTripDuration} min snitt i dag
       </Badge>
     </section>
   );

@@ -94,7 +94,7 @@ body {
     &::before,
     &::after {
       content: "";
-      @apply block bg-gradient-to-b from-background to-transparent pointer-events-none sticky left-0 right-0 h-12 z-10;
+      @apply block bg-gradient-to-b from-background to-transparent pointer-events-none sticky left-0 right-0 h-10 z-10;
     }
     &::before {
       @apply top-0;
