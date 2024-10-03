@@ -124,8 +124,6 @@ export default function Home() {
     }
   }, [setActiveEntry, session]);
 
-  // if (isLoading) return null;
-
   return (
     <>
       <div className="text-center grid grid-rows-[auto,1fr,auto] h-[100dvh] p-4">
@@ -146,7 +144,10 @@ export default function Home() {
           )}
         </Header>
 
-        <main className="overflow-auto fade grid items-center mt-1 mb-3 before:h-6">
+        <motion.main
+          className="overflow-auto fade grid items-center mt-1 mb-3 before:h-6"
+          animate={{ opacity: isLoading ? 0 : 1 }}
+        >
           <AnimatePresence mode="wait">
             {activeEntry ? (
               <motion.div key="timer" {...motionProps}>
@@ -159,7 +160,7 @@ export default function Home() {
               </motion.div>
             )}
           </AnimatePresence>
-        </main>
+        </motion.main>
 
         <footer
           className={cn("flex flex-col gap-3", {
