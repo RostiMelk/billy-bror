@@ -108,7 +108,9 @@ export default function Home() {
       status: "active",
       mode: "auto",
       location: "outside",
+      users: session.data?.user ? [{ ...session.data.user }] : [],
     };
+
     setActiveEntry(tempEntry);
 
     try {
@@ -118,7 +120,7 @@ export default function Home() {
       console.error("Error starting entry:", error);
       setActiveEntry(null);
     }
-  }, [setActiveEntry]);
+  }, [setActiveEntry, session]);
 
   if (isLoading) return null;
 
