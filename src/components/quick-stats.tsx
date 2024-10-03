@@ -42,17 +42,17 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
         {lastTripEnded}
       </Badge>
 
+      <Badge className={cn("bg-purple-200 text-purple-950", badgeStyle)}>
+        <FootprintsIcon size={16} />
+        {entriesToday.length} turer i dag
+      </Badge>
+
       {todaysStats.topWalkers.length > 0 && (
         <Badge className={cn("bg-yellow-200 text-yellow-950", badgeStyle)}>
           <AwardIcon size={16} />
           {firstName(todaysStats.topWalkers?.[0]?.user.name)}
         </Badge>
       )}
-
-      <Badge className={cn("bg-purple-200 text-purple-950", badgeStyle)}>
-        <FootprintsIcon size={16} />
-        {entriesToday.length} turer i dag
-      </Badge>
 
       <Badge className={cn("bg-blue-200 text-blue-950", badgeStyle)}>
         <TreePineIcon size={16} />
