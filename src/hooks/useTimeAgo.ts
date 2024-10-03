@@ -1,12 +1,6 @@
 import { pluralize } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
-const calculateSecondsSinceMidnight = (date: Date) => {
-  const midnight = new Date(date);
-  midnight.setHours(0, 0, 0, 0);
-  return Math.floor((date.getTime() - midnight.getTime()) / 1000);
-};
-
 export function useTimeAgo(date: string | number | Date): string {
   const [timeAgo, setTimeAgo] = useState<string>("");
 
@@ -15,7 +9,6 @@ export function useTimeAgo(date: string | number | Date): string {
       const now = new Date();
       const past = new Date(date);
       const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
-      const secondsSinceMidnight = calculateSecondsSinceMidnight(now);
 
       switch (true) {
         case diffInSeconds < 60:
@@ -26,7 +19,7 @@ export function useTimeAgo(date: string | number | Date): string {
           setTimeAgo(`${minutes} min siden`);
           break;
         }
-        case diffInSeconds < secondsSinceMidnight: {
+        case diffInSeconds < 86400: {
           const hours = Math.floor(diffInSeconds / 3600);
           setTimeAgo(`${hours} ${pluralize(hours, "time", "timer")} siden`);
           break;
