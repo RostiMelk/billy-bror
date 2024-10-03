@@ -65,7 +65,7 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
 
       <Badge className={cn("bg-orange-200 text-orange-950", badgeStyle)}>
         <TimerIcon size={16} />
-        {todaysStats?.averageTripDuration} min snitt i dag
+        {todaysStats?.averageTripDuration.toFixed(0)} min snitt i dag
       </Badge>
     </section>
   );
