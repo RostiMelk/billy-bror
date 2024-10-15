@@ -13,12 +13,23 @@ import { calculateStats } from "@/lib/process-entries-for-charts";
 import { firstName, pluralize } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { getStreakCount } from "@/lib/actions";
+import { motion } from "framer-motion";
 
 interface QuickStatsProps {
   entries: ResolvedEntryDocument[];
 }
 
 const badgeStyle = "shrink-0 gap-1.5 py-2 px-3 items-center truncate";
+
+const badgeVariants = {
+  hidden: { scale: 0 },
+  visible: { scale: 1 },
+};
+
+const getTransition = () => ({
+  duration: 0.3,
+  delay: Math.random() * 0.5 + 0.5,
+});
 
 export const QuickStats = ({ entries }: QuickStatsProps) => {
   const [streakCount, setStreakCount] = useState(0);
@@ -50,37 +61,79 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
   return (
     <section className="flex items-center gap-2.5 mb-6 flex-wrap">
       {streakCount > 0 && (
-        <Badge className={cn("bg-red-200 text-red-950", badgeStyle)}>
-          <FlameIcon size={16} />
-          {streakCount} {pluralize(streakCount, "dag", "dager")} streak
-        </Badge>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={badgeVariants}
+          transition={getTransition()}
+        >
+          <Badge className={cn("bg-red-200 text-red-950", badgeStyle)}>
+            <FlameIcon size={16} />
+            {streakCount} {pluralize(streakCount, "dag", "dager")} streak
+          </Badge>
+        </motion.div>
       )}
-      <Badge className={cn("bg-green-200 text-green-950", badgeStyle)}>
-        <FootprintsIcon size={16} />
-        {lastTripEnded}
-      </Badge>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={badgeVariants}
+        transition={getTransition()}
+      >
+        <Badge className={cn("bg-green-200 text-green-950", badgeStyle)}>
+          <FootprintsIcon size={16} />
+          {lastTripEnded}
+        </Badge>
+      </motion.div>
 
-      <Badge className={cn("bg-purple-200 text-purple-950", badgeStyle)}>
-        <FootprintsIcon size={16} />
-        {todaysStats.totalTrips} turer i dag
-      </Badge>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={badgeVariants}
+        transition={getTransition()}
+      >
+        <Badge className={cn("bg-purple-200 text-purple-950", badgeStyle)}>
+          <FootprintsIcon size={16} />
+          {todaysStats.totalTrips} turer i dag
+        </Badge>
+      </motion.div>
 
       {todaysStats.topWalkers.length > 0 && (
-        <Badge className={cn("bg-yellow-200 text-yellow-950", badgeStyle)}>
-          <AwardIcon size={16} />
-          {firstName(todaysStats.topWalkers?.[0]?.user.name)}
-        </Badge>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={badgeVariants}
+          transition={getTransition()}
+        >
+          <Badge className={cn("bg-yellow-200 text-yellow-950", badgeStyle)}>
+            <AwardIcon size={16} />
+            {firstName(todaysStats.topWalkers?.[0]?.user.name)}
+          </Badge>
+        </motion.div>
       )}
 
-      <Badge className={cn("bg-blue-200 text-blue-950", badgeStyle)}>
-        <TreePineIcon size={16} />
-        {(todaysStats?.successRate * 100).toFixed(0)}% suksess
-      </Badge>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={badgeVariants}
+        transition={getTransition()}
+      >
+        <Badge className={cn("bg-blue-200 text-blue-950", badgeStyle)}>
+          <TreePineIcon size={16} />
+          {(todaysStats?.successRate * 100).toFixed(0)}% suksess
+        </Badge>
+      </motion.div>
 
-      <Badge className={cn("bg-orange-200 text-orange-950", badgeStyle)}>
-        <TimerIcon size={16} />
-        {todaysStats?.averageTripDuration.toFixed(0)} min snitt i dag
-      </Badge>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={badgeVariants}
+        transition={getTransition()}
+      >
+        <Badge className={cn("bg-orange-200 text-orange-950", badgeStyle)}>
+          <TimerIcon size={16} />
+          {todaysStats?.averageTripDuration.toFixed(0)} min snitt i dag
+        </Badge>
+      </motion.div>
     </section>
   );
 };

@@ -3,11 +3,11 @@
 import { startEntry, appendMyselfToEntry } from "@/lib/actions";
 import type { ResolvedEntryDocument } from "@/types/entry";
 import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { SubmitDialog } from "@/components/submit-dialog";
 import { Timer } from "@/components/timer";
 import { AllTrips } from "@/components/all-trips";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, UserPlusIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Header } from "@/components/header";
 import Link from "next/link";
@@ -32,6 +32,16 @@ export default function Home() {
   const [showSubmitDialog, setShowSubmitDialog] = useState<boolean>(false);
   const session = useSession();
   const isPwa = useIsPwa();
+
+  const sessionUserIsWalking = useMemo(() => {
+    return activeEntry?.users?.some(
+      (user) => user.email === session.data?.user?.email,
+    );
+  }, [activeEntry, session]);
+
+  const canJoin = useMemo(() => {
+    return !sessionUserIsWalking && !!activeEntry;
+  }, [sessionUserIsWalking, activeEntry]);
 
   const handleAddManually = useCallback(() => {
     setShowSubmitDialog(true);
@@ -67,11 +77,7 @@ export default function Home() {
     const visibilityChangeHandler = async () => {
       if (document.visibilityState !== "visible") return;
 
-      const sessionUserIsWalking = activeEntry?.users?.some(
-        (user) => user.email === session.data?.user?.email,
-      );
       const walkerNames = activeEntry?.users?.map((w) => firstName(w.name));
-      const canJoin = !sessionUserIsWalking && activeEntry;
 
       const activeTripMessage = sessionUserIsWalking
         ? "Håper du har hatt en fin tur! 🐕‍🦺"
@@ -81,7 +87,7 @@ export default function Home() {
         ? activeTripMessage
         : "Klar for ny tur? Velkommen tilbake! 👋";
       const description = activeEntry
-        ? "Trykk på stopp for å avslutte turen"
+        ? "Trykk avslutt for å stoppe turen"
         : "Trykk på start for å begynne en ny tur";
       const action = canJoin && {
         label: "Bli med!",
@@ -91,16 +97,14 @@ export default function Home() {
       toast(message, { description, action });
     };
 
-    window.addEventListener("load", visibilityChangeHandler);
     window.addEventListener("visibilitychange", visibilityChangeHandler);
     document.body.style.overflow = "hidden";
 
     return () => {
-      window.removeEventListener("load", visibilityChangeHandler);
       window.removeEventListener("visibilitychange", visibilityChangeHandler);
       document.body.style.overflow = "auto";
     };
-  }, [activeEntry, session, handleAppendMyselfToEntry]);
+  }, [activeEntry, sessionUserIsWalking, canJoin, handleAppendMyselfToEntry]);
 
   const handleStartEntry = useCallback(async () => {
     const startTime = new Date().toISOString();
@@ -173,14 +177,28 @@ export default function Home() {
               <p className="text-sm text-muted-foreground font-medium">
                 Billy på tur, aldri sur
               </p>
-              <Button
-                size="lg"
-                className="w-full"
-                variant="destructive"
-                onClick={handleStopEntry}
-              >
-                Avslutt turen
-              </Button>
+
+              <div className="flex gap-2">
+                <Button
+                  size="lg"
+                  className="w-full"
+                  variant="destructive"
+                  onClick={handleStopEntry}
+                >
+                  Avslutt turen
+                </Button>
+                {canJoin && (
+                  <Button
+                    size="lg"
+                    className="w-full"
+                    variant="outline"
+                    onClick={handleAppendMyselfToEntry}
+                  >
+                    Bli med
+                    <UserPlusIcon className="size-6 ml-2.5" />
+                  </Button>
+                )}
+              </div>
             </>
           ) : (
             <>
