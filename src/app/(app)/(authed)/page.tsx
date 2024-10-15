@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState, useMemo } from "react";
 import { SubmitDialog } from "@/components/submit-dialog";
 import { Timer } from "@/components/timer";
 import { AllTrips } from "@/components/all-trips";
-import { PlusIcon, UserPlusIcon } from "lucide-react";
+import { PlusIcon, HandshakeIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Header } from "@/components/header";
 import Link from "next/link";
@@ -195,7 +195,7 @@ export default function Home() {
                     onClick={handleAppendMyselfToEntry}
                   >
                     Bli med
-                    <UserPlusIcon className="size-6 ml-2.5" />
+                    <HandshakeIcon className="size-6 ml-2.5" />
                   </Button>
                 )}
               </div>
