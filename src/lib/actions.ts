@@ -51,6 +51,24 @@ export async function getAllEntriesThisWeek(): Promise<
   return serverClient.fetch(query, { weekAgo });
 }
 
+export async function getStreakCount(): Promise<number> {
+  const query = groq`*[_type == "entry" && location == "inside" && status == "completed"] | order(startTime desc) [0].startTime`;
+  const firstInsideEntryDate = await serverClient.fetch<string | null>(query);
+
+  if (!firstInsideEntryDate) {
+    return 0;
+  }
+
+  const firstDate = new Date(firstInsideEntryDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const diffTime = today.getTime() - firstDate.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  return diffDays;
+}
+
 export async function addManualEntry(entry: ManualEntry) {
   const validatedEntry = ManualEntry.safeParse(entry);
   if (!validatedEntry.success) {
