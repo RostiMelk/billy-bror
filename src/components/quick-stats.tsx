@@ -8,11 +8,12 @@ import {
   TreePineIcon,
   TimerIcon,
   FlameIcon,
+  ThermometerIcon,
 } from "lucide-react";
 import { calculateStats } from "@/lib/process-entries-for-charts";
 import { firstName, pluralize } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-import { getStreakCount } from "@/lib/actions";
+import { getStreakCount, getTemperature } from "@/lib/actions";
 import { motion } from "framer-motion";
 
 interface QuickStatsProps {
@@ -28,14 +29,16 @@ const badgeVariants = {
 
 const getTransition = () => ({
   duration: 0.3,
-  delay: Math.random() * 0.5 + 0.5,
+  delay: Math.random() * 0.5 + 1,
 });
 
 export const QuickStats = ({ entries }: QuickStatsProps) => {
   const [streakCount, setStreakCount] = useState(0);
+  const [temperature, setTemperature] = useState<number | null>(null);
 
   useEffect(() => {
     getStreakCount().then(setStreakCount);
+    getTemperature().then(setTemperature);
   }, []);
 
   const entriesToday = useMemo(() => {
@@ -85,6 +88,20 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
         </Badge>
       </motion.div>
 
+      {temperature !== null && (
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={badgeVariants}
+          transition={getTransition()}
+        >
+          <Badge className={cn("bg-cyan-200 text-cyan-950", badgeStyle)}>
+            <ThermometerIcon size={16} />
+            {temperature.toFixed(1)}°C
+          </Badge>
+        </motion.div>
+      )}
+
       <motion.div
         initial="hidden"
         animate="visible"
@@ -94,6 +111,18 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
         <Badge className={cn("bg-purple-200 text-purple-950", badgeStyle)}>
           <FootprintsIcon size={16} />
           {todaysStats.totalTrips} turer i dag
+        </Badge>
+      </motion.div>
+
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={badgeVariants}
+        transition={getTransition()}
+      >
+        <Badge className={cn("bg-orange-200 text-orange-950", badgeStyle)}>
+          <TimerIcon size={16} />
+          {todaysStats?.averageTripDuration.toFixed(0)} min snitt i dag
         </Badge>
       </motion.div>
 
@@ -120,18 +149,6 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
         <Badge className={cn("bg-blue-200 text-blue-950", badgeStyle)}>
           <TreePineIcon size={16} />
           {(todaysStats?.successRate * 100).toFixed(0)}% suksess
-        </Badge>
-      </motion.div>
-
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={badgeVariants}
-        transition={getTransition()}
-      >
-        <Badge className={cn("bg-orange-200 text-orange-950", badgeStyle)}>
-          <TimerIcon size={16} />
-          {todaysStats?.averageTripDuration.toFixed(0)} min snitt i dag
         </Badge>
       </motion.div>
     </section>

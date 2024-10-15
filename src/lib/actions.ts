@@ -69,6 +69,21 @@ export async function getStreakCount(): Promise<number> {
   return diffDays;
 }
 
+export async function getTemperature(): Promise<number | null> {
+  try {
+    const response = await fetch(
+      "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.9139&lon=10.7522", // Oslo
+    );
+    const data = await response.json();
+    const temp =
+      data.properties.timeseries[0].data.instant.details.air_temperature;
+    return temp;
+  } catch (error) {
+    console.error("Failed to fetch temperature:", error);
+    return null;
+  }
+}
+
 export async function addManualEntry(entry: ManualEntry) {
   const validatedEntry = ManualEntry.safeParse(entry);
   if (!validatedEntry.success) {
