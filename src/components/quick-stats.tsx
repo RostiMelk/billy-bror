@@ -29,7 +29,7 @@ const badgeVariants = {
 
 const getTransition = () => ({
   duration: 0.3,
-  delay: Math.random() * 0.5 + 1,
+  delay: Math.random() * 0.5 + 0.5,
 });
 
 export const QuickStats = ({ entries }: QuickStatsProps) => {
