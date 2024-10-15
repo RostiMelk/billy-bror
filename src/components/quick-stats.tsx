@@ -14,7 +14,7 @@ import { calculateStats } from "@/lib/process-entries-for-charts";
 import { firstName, pluralize } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { getStreakCount, getTemperature } from "@/lib/actions";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface QuickStatsProps {
   entries: ResolvedEntryDocument[];
@@ -23,14 +23,9 @@ interface QuickStatsProps {
 const badgeStyle = "shrink-0 gap-1.5 py-2 px-3 items-center truncate";
 
 const badgeVariants = {
-  hidden: { scale: 0 },
-  visible: { scale: 1 },
+  hidden: { opacity: 0, scale: 0 },
+  visible: { opacity: 1, scale: 1 },
 };
-
-const getTransition = () => ({
-  duration: 0.3,
-  delay: Math.random() * 0.5 + 0.5,
-});
 
 export const QuickStats = ({ entries }: QuickStatsProps) => {
   const [streakCount, setStreakCount] = useState(0);
@@ -61,96 +56,104 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
     return calculateStats(entriesToday);
   }, [entriesToday]);
 
-  return (
-    <section className="flex items-center gap-2.5 mb-6 flex-wrap">
-      {streakCount > 0 && (
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={badgeVariants}
-          transition={getTransition()}
-        >
+  const statsBadges = useMemo(() => {
+    const badgeSet = new Set<{ key: string; badge: JSX.Element }>();
+
+    if (streakCount > 0) {
+      badgeSet.add({
+        key: "streak",
+        badge: (
           <Badge className={cn("bg-red-200 text-red-950", badgeStyle)}>
             <FlameIcon size={16} />
             {streakCount} {pluralize(streakCount, "dag", "dager")} streak
           </Badge>
-        </motion.div>
-      )}
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={badgeVariants}
-        transition={getTransition()}
-      >
+        ),
+      });
+    }
+
+    badgeSet.add({
+      key: "lastTrip",
+      badge: (
         <Badge className={cn("bg-green-200 text-green-950", badgeStyle)}>
           <FootprintsIcon size={16} />
           {lastTripEnded}
         </Badge>
-      </motion.div>
+      ),
+    });
 
-      {temperature !== null && (
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={badgeVariants}
-          transition={getTransition()}
-        >
+    if (temperature !== null) {
+      badgeSet.add({
+        key: "temperature",
+        badge: (
           <Badge className={cn("bg-cyan-200 text-cyan-950", badgeStyle)}>
             <ThermometerIcon size={16} />
             {temperature.toFixed(1)}°C
           </Badge>
-        </motion.div>
-      )}
+        ),
+      });
+    }
 
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={badgeVariants}
-        transition={getTransition()}
-      >
+    badgeSet.add({
+      key: "totalTrips",
+      badge: (
         <Badge className={cn("bg-purple-200 text-purple-950", badgeStyle)}>
           <FootprintsIcon size={16} />
           {todaysStats.totalTrips} turer i dag
         </Badge>
-      </motion.div>
+      ),
+    });
 
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={badgeVariants}
-        transition={getTransition()}
-      >
+    badgeSet.add({
+      key: "avgDuration",
+      badge: (
         <Badge className={cn("bg-orange-200 text-orange-950", badgeStyle)}>
           <TimerIcon size={16} />
           {todaysStats?.averageTripDuration.toFixed(0)} min snitt i dag
         </Badge>
-      </motion.div>
+      ),
+    });
 
-      {todaysStats.topWalkers.length > 0 && (
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={badgeVariants}
-          transition={getTransition()}
-        >
+    if (todaysStats.topWalkers.length > 0) {
+      badgeSet.add({
+        key: "topWalker",
+        badge: (
           <Badge className={cn("bg-yellow-200 text-yellow-950", badgeStyle)}>
             <AwardIcon size={16} />
             {firstName(todaysStats.topWalkers?.[0]?.user.name)}
           </Badge>
-        </motion.div>
-      )}
+        ),
+      });
+    }
 
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={badgeVariants}
-        transition={getTransition()}
-      >
+    badgeSet.add({
+      key: "successRate",
+      badge: (
         <Badge className={cn("bg-blue-200 text-blue-950", badgeStyle)}>
           <TreePineIcon size={16} />
           {(todaysStats?.successRate * 100).toFixed(0)}% suksess
         </Badge>
-      </motion.div>
-    </section>
+      ),
+    });
+
+    return badgeSet;
+  }, [streakCount, lastTripEnded, temperature, todaysStats]);
+
+  return (
+    <motion.section className="flex items-center gap-2.5 mb-6 flex-wrap" layout>
+      <AnimatePresence>
+        {Array.from(statsBadges).map(({ key, badge }, index) => (
+          <motion.div
+            key={key}
+            layout
+            initial="hidden"
+            animate="visible"
+            variants={badgeVariants}
+            transition={{ duration: 0.3, delay: index * 0.05 }}
+          >
+            {badge}
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </motion.section>
   );
 };

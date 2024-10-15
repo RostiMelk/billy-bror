@@ -65,7 +65,6 @@ export async function getStreakCount(): Promise<number> {
 
   const diffTime = today.getTime() - firstDate.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
   return diffDays;
 }
 
@@ -75,9 +74,7 @@ export async function getTemperature(): Promise<number | null> {
       "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.9139&lon=10.7522", // Oslo
     );
     const data = await response.json();
-    const temp =
-      data.properties.timeseries[0].data.instant.details.air_temperature;
-    return temp;
+    return data.properties.timeseries[0].data.instant.details.air_temperature;
   } catch (error) {
     console.error("Failed to fetch temperature:", error);
     return null;
