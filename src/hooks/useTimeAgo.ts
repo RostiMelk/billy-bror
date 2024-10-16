@@ -20,10 +20,10 @@ export function useTimeAgo(date: string | number | Date): string {
           break;
         }
         case diffInSeconds < 3600 * 3: {
-          const minutes = Math.floor(diffInSeconds / 60);
-          const hours = Math.floor(minutes / 60);
+          const minutes = Math.floor(diffInSeconds / 60) % 60;
+          const hours = Math.floor(diffInSeconds / 3600);
           setTimeAgo(
-            `${hours} ${pluralize(hours, "time", "timer")} og ${minutes % 60} min siden`,
+            `${hours} ${pluralize(hours, "time", "timer")} og ${minutes} min siden`,
           );
           break;
         }
