@@ -65,7 +65,7 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
         badge: (
           <Badge
             className={cn(
-              "bg-gradient-to-r from-red-200 via-red-300 to-amber-300 text-red-950",
+              "bg-gradient-to-r from-amber-300 via-red-300 to-red-200 text-red-950",
               badgeStyle,
             )}
           >
