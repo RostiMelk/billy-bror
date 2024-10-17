@@ -69,6 +69,7 @@ export default function Home() {
     if (!activeEntry) return;
     appendMyselfToEntry(activeEntry._id);
     toast("Du er lagt til på turen 💚", {
+      id: "append-walker",
       description: "Kos dere ute!",
     });
   }, [activeEntry]);
@@ -83,6 +84,7 @@ export default function Home() {
         ? "Håper du har hatt en fin tur! 🐕‍🦺"
         : `${humanJoin(walkerNames)} er på tur! 🤩`;
 
+      const id = "welcome-back";
       const message = activeEntry
         ? activeTripMessage
         : "Klar for ny tur? Velkommen tilbake! 👋";
@@ -94,7 +96,7 @@ export default function Home() {
         onClick: handleAppendMyselfToEntry,
       };
 
-      toast(message, { description, action });
+      toast(message, { id, description, action });
     };
 
     window.addEventListener("visibilitychange", visibilityChangeHandler);

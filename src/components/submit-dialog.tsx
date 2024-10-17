@@ -373,7 +373,9 @@ export const SubmitDialog = ({
                   className="w-full"
                   onClick={() => {
                     handleDelete();
-                    toast.info("Turen ble avbrutt og slettet");
+                    toast.info("Turen ble avbrutt og slettet", {
+                      id: "delete-entry",
+                    });
                   }}
                   disabled={isLoading}
                   variant="destructive"
