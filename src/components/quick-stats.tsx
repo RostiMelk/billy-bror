@@ -63,7 +63,12 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
       badgeSet.add({
         key: "streak",
         badge: (
-          <Badge className={cn("bg-red-200 text-red-950", badgeStyle)}>
+          <Badge
+            className={cn(
+              "bg-gradient-to-r from-red-200 via-red-300 to-amber-300 text-red-950",
+              badgeStyle,
+            )}
+          >
             <FlameIcon size={16} />
             {streakCount} {pluralize(streakCount, "dag", "dager")} streak
           </Badge>
