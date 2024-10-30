@@ -185,12 +185,18 @@ export function calculateStats(entries: ResolvedEntryDocument[]): {
   const topWalkers = Object.entries(
     tripsWithWalkers.reduce(
       (acc, entry) => {
-        if (entry.users) {
-          for (const user of entry.users) {
-            if (!acc[user.email]) {
-              acc[user.email] = { user, trips: 0 };
+        if (entry.users && entry.endTime) {
+          const startTime = new Date(entry.startTime).getTime();
+          const endTime = new Date(entry.endTime).getTime();
+          const tripDurationInMinutes = (endTime - startTime) / 60000;
+          // Only count trips that are 3+ minutes long
+          if (tripDurationInMinutes >= 3) {
+            for (const user of entry.users) {
+              if (!acc[user.email]) {
+                acc[user.email] = { user, trips: 0 };
+              }
+              acc[user.email].trips += 1;
             }
-            acc[user.email].trips += 1;
           }
         }
         return acc;
