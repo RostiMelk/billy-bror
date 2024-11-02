@@ -66,7 +66,7 @@ export const TripRow = ({ entry, onEdit }: TripRowProps) => {
     <li>
       <button
         type="button"
-        className="w-full flex items-center py-3 group-first:pt-0 group-last:pb-0 border-b group-last:border-b-0"
+        className="w-full flex items-center py-3 pl-2 pr-1 group-first:pt-0 group-last:pb-0 border-b group-last:border-b-0"
         onClick={handleEdit}
       >
         <div className="flex -space-x-3 overflow-hidden mr-2">
