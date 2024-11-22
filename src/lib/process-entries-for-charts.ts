@@ -170,15 +170,15 @@ export function calculateStats(entries: ResolvedEntryDocument[]): {
 
   const totalDuration = outdoorTrips.reduce((sum, entry) => {
     if (entry.endTime) {
-      return (
-        sum +
+      const duration =
         (new Date(entry.endTime).getTime() -
           new Date(entry.startTime).getTime()) /
-          60000
-      );
+        60000;
+      return sum + (duration > 0 ? duration : 0);
     }
     return sum;
   }, 0);
+
   const averageTripDuration = totalDuration / totalOutsideTrips;
 
   // Sort walkers by number of trips
