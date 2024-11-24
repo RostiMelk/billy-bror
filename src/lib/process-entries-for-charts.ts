@@ -221,3 +221,70 @@ export function calculateStats(entries: ResolvedEntryDocument[]): {
     topWalkers,
   };
 }
+
+/**
+ * Calculate chance of poop for a given new trip based on previous trips and patterns.
+ * Uses historical data, time since last poop, time of day, and consecutive poops to estimate probability.
+ * @returns A probability between 0 and 1 (0 = 0% chance, 1 = 100% chance)
+ */
+export const calculatePoopChance = (
+  entries: ResolvedEntryDocument[],
+  newTrip: ResolvedEntryDocument,
+): number => {
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  const previousTrips = entries.filter(
+    (entry) =>
+      entry.startTime > weekAgo.toISOString() &&
+      entry.startTime < newTrip.startTime,
+  );
+
+  if (previousTrips.length === 0) return 0.5; // default to 50% if no history
+
+  // Calculate time since last poop
+  const lastPoopTrip = [...previousTrips]
+    .reverse()
+    .find((entry) => entry.poops && entry.poops > 0);
+
+  const hoursSinceLastPoop = lastPoopTrip
+    ? (new Date(newTrip.startTime).getTime() -
+        new Date(lastPoopTrip.startTime).getTime()) /
+      (1000 * 60 * 60)
+    : 24; // default to 24 if no previous poop found
+
+  // Calculate consecutive poops today
+  const today = new Date(newTrip.startTime).toDateString();
+  const consecutivePoops = [...previousTrips]
+    .reverse()
+    .filter((entry) => new Date(entry.startTime).toDateString() === today)
+    .reduce((consecutiveCount, currentEntry, index, entries) => {
+      if (index === 0 && currentEntry.poops && currentEntry.poops > 0) return 1;
+      const currentPoops = currentEntry.poops ?? 0;
+      const previousPoops = entries[index - 1].poops ?? 0;
+      if (currentPoops > 0 && previousPoops > 0) return consecutiveCount + 1;
+      return 0;
+    }, 0);
+
+  // Calculate time of day factor (dogs often poop in morning/evening)
+  const hour = new Date(newTrip.startTime).getHours();
+  const timeOfDayFactor = hour <= 9 || hour >= 17 ? 1.5 : 1;
+
+  // Base probability from historical data
+  const historicalRate =
+    previousTrips.reduce((sum, entry) => sum + (entry.poops || 0), 0) /
+    previousTrips.length;
+
+  // Time since last poop factor (higher chance the longer it's been)
+  const timeFactor = Math.min(hoursSinceLastPoop / 12, 2);
+
+  // Reduce probability based on consecutive poops
+  const consecutivePoopsFactor = Math.max(0.1, 1 - consecutivePoops * 0.25);
+
+  // Combine factors with weights
+  const weightedProbability =
+    (historicalRate * 0.3 + timeFactor * 0.3 + timeOfDayFactor * 0.15) *
+    consecutivePoopsFactor;
+
+  return Math.min(Math.max(weightedProbability, 0), 1);
+};

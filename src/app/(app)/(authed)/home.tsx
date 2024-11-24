@@ -17,6 +17,7 @@ import { useIsPwa } from "@/hooks/useIsPwa";
 import { cn, firstName, humanJoin } from "@/lib/utils";
 import { QuickStats } from "@/components/quick-stats";
 import type { Session } from "next-auth";
+import { calculatePoopChance } from "@/lib/process-entries-for-charts";
 
 const motionProps = {
   initial: { opacity: 0, y: 20 },
@@ -25,7 +26,6 @@ const motionProps = {
 };
 
 export default function Home({ session }: { session: Session }) {
-  console.log("session", session);
   const { activeEntry, setActiveEntry, allEntries, isLoading } =
     useEntrySubscription();
   const [editingEntry, setEditingEntry] =
@@ -130,6 +130,11 @@ export default function Home({ session }: { session: Session }) {
     }
   }, [setActiveEntry, session]);
 
+  const chanceOfPoop = useMemo(() => {
+    if (!activeEntry) return null;
+    return calculatePoopChance(allEntries, activeEntry);
+  }, [allEntries, activeEntry]);
+
   return (
     <>
       <div className="text-center grid grid-rows-[auto,1fr,auto] h-[100dvh] p-4">
@@ -158,7 +163,7 @@ export default function Home({ session }: { session: Session }) {
           <AnimatePresence mode="wait">
             {activeEntry ? (
               <motion.div key="timer" {...motionProps}>
-                <Timer entry={activeEntry} />
+                <Timer entry={activeEntry} chanceOfPoop={chanceOfPoop} />
               </motion.div>
             ) : (
               <motion.div key="lastTrip" {...motionProps}>

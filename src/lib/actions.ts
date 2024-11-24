@@ -133,8 +133,6 @@ export async function startEntry(
 export async function updateEntry(entryId: string, entry: AutoEntry) {
   await getUserRef();
 
-  console.log("entryId", entryId, "entry", entry);
-
   const validatedEntry = AutoEntry.safeParse(entry);
   if (!validatedEntry.success) {
     throw new Error("Invalid entry data");

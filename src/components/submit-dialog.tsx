@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -180,11 +181,11 @@ export const SubmitDialog = ({
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader className="mb-1">
-          <DialogDescription>
+          <DialogTitle>
             {entry
               ? "Legg til informasjon om turen"
               : "Legg til informasjon om turen manuelt"}
-          </DialogDescription>
+          </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>

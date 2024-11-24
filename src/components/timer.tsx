@@ -9,9 +9,10 @@ import { AnimatePresence, motion } from "framer-motion";
 
 interface TimerProps {
   entry: ResolvedEntryDocument;
+  chanceOfPoop: number | null;
 }
 
-export const Timer = ({ entry }: TimerProps) => {
+export const Timer = ({ entry, chanceOfPoop }: TimerProps) => {
   const elapsedTime = useTimer(entry.startTime);
   const hasUsers = Boolean(entry?.users?.length);
 
@@ -54,6 +55,17 @@ export const Timer = ({ entry }: TimerProps) => {
       </motion.p>
 
       <p className="text-7xl tabular-nums font-medium mb-4">{elapsedTime}</p>
+
+      <p className="text font-medium text-gray-700 mt-1">
+        {chanceOfPoop !== null && (
+          <span>
+            Sannsynlighet for 💩:{" "}
+            <span className="font-semibold">
+              {(chanceOfPoop * 100).toFixed(1)}%
+            </span>
+          </span>
+        )}
+      </p>
     </div>
   );
 };
