@@ -46,6 +46,7 @@ import {
   AlertDialogHeader,
   AlertDialogFooter,
   AlertDialogTrigger,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
@@ -353,7 +354,9 @@ export const SubmitDialog = ({
                   </AlertDialogTrigger>
                   <AlertDialogContent className="max-w-xs">
                     <AlertDialogHeader>
-                      Er du sikker på at du slette turen?
+                      <AlertDialogTitle>
+                        Er du sikker på at du slette turen?
+                      </AlertDialogTitle>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Avbryt</AlertDialogCancel>
