@@ -62,16 +62,19 @@ export function ChartPeePoo({ chartData }: { chartData: ChartData[] }) {
           />
           <Line
             type="monotone"
+            dot={false}
             dataKey="outsidePees"
             stroke="var(--color-outsidePees)"
           />
           <Line
             type="monotone"
+            dot={false}
             dataKey="insidePoops"
             stroke="var(--color-insidePoops)"
           />
           <Line
             type="monotone"
+            dot={false}
             dataKey="insidePees"
             stroke="var(--color-insidePees)"
           />
