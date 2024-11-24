@@ -90,7 +90,7 @@ export async function StatsContent() {
         </div>
       </section>
 
-      <section className="mb-8">
+      <section className="mb-24">
         <h2 className="text-lg text-center mb-2 font-semibold">
           Turer uke for uke
         </h2>
