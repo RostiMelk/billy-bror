@@ -92,19 +92,19 @@ export async function StatsContent() {
 
       <section className="mb-8">
         <h2 className="text-lg text-center mb-2 font-semibold">
-          Tiss og bæsj over tid
-        </h2>
-        <div className="w-full">
-          <ChartPeePoo chartData={poopPeeChartData} />
-        </div>
-      </section>
-
-      <section>
-        <h2 className="text-lg text-center mb-2 font-semibold">
           Turer uke for uke
         </h2>
         <div className="w-full">
           <ChartTripsPerDay chartData={tripsChartData} />
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-lg text-center mb-2 font-semibold">
+          Tiss og bæsj over tid
+        </h2>
+        <div className="w-full">
+          <ChartPeePoo chartData={poopPeeChartData} />
         </div>
       </section>
     </main>
