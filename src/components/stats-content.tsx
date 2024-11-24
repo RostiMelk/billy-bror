@@ -99,7 +99,7 @@ export async function StatsContent() {
         </div>
       </section>
 
-      <section className="mb-8">
+      <section className="mb-16">
         <h2 className="text-lg text-center mb-2 font-semibold">
           Tiss og bæsj over tid
         </h2>
