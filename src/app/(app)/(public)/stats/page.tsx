@@ -4,13 +4,16 @@ import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { StatsContent } from "@/components/stats-content";
 import { LoaderPinwheelIcon } from "lucide-react";
+import { getServerSession } from "next-auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function Stats() {
+  const session = await getServerSession();
+
   return (
     <div className="grid grid-rows-[auto,1fr] h-[100dvh] p-4">
-      <Header>
+      <Header session={session}>
         <Button size="sm" variant="secondary" asChild>
           <Link href="/">Hjem</Link>
         </Button>

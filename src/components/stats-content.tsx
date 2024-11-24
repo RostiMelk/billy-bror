@@ -16,7 +16,7 @@ export async function StatsContent() {
 
   const stats = calculateStats(thisWeeksEntries);
   const poopPeeChartData = processEntriesForPoopPeeChart(allEntries);
-  const tripsChartData = processEntriesForTripsChart(thisWeeksEntries);
+  const tripsChartData = processEntriesForTripsChart(allEntries);
 
   return (
     <main className="my-8">
@@ -101,7 +101,7 @@ export async function StatsContent() {
 
       <section>
         <h2 className="text-lg text-center mb-2 font-semibold">
-          Turer per dag siste 7 dager
+          Turer uke for uke
         </h2>
         <div className="w-full">
           <ChartTripsPerDay chartData={tripsChartData} />

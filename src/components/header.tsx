@@ -4,7 +4,7 @@ import type { Session } from "next-auth";
 
 interface HeaderProps {
   children?: React.ReactNode;
-  session?: Session;
+  session?: Session | null;
 }
 
 export const Header = ({ children, session }: HeaderProps) => {
