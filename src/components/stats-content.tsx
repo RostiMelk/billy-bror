@@ -50,7 +50,7 @@ export async function StatsContent() {
         </ul>
       </section>
 
-      <section className="mb-8">
+      <section className="mb-6">
         <h2 className="text-lg text-center mb-2 font-semibold">
           Statistikk for Billy siste 7 dager
         </h2>
@@ -90,7 +90,7 @@ export async function StatsContent() {
         </div>
       </section>
 
-      <section className="mb-32">
+      <section className="mb-28">
         <h2 className="text-lg text-center mb-2 font-semibold">
           Turer uke for uke
         </h2>
