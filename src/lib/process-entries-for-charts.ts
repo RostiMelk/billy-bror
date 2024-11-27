@@ -261,7 +261,7 @@ export const calculatePoopChance = (
     .reduce((consecutiveCount, currentEntry, index, entries) => {
       if (index === 0 && currentEntry.poops && currentEntry.poops > 0) return 1;
       const currentPoops = currentEntry.poops ?? 0;
-      const previousPoops = entries[index - 1].poops ?? 0;
+      const previousPoops = entries[index - 1]?.poops ?? 0;
       if (currentPoops > 0 && previousPoops > 0) return consecutiveCount + 1;
       return 0;
     }, 0);
