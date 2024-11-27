@@ -17,7 +17,7 @@ import { useIsPwa } from "@/hooks/useIsPwa";
 import { cn, firstName, humanJoin } from "@/lib/utils";
 import { QuickStats } from "@/components/quick-stats";
 import type { Session } from "next-auth";
-import { calculatePoopChance } from "@/lib/process-entries-for-charts";
+import { calculatePoopChance } from "@/lib/calculate-poop-chance";
 
 const motionProps = {
   initial: { opacity: 0, y: 20 },
