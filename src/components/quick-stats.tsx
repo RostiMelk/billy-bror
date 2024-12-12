@@ -56,6 +56,15 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
     return calculateStats(entriesToday);
   }, [entriesToday]);
 
+  const topWalkerNames = useMemo(() => {
+    if (!todaysStats.topWalkers.length) return null;
+    const maxTrips = todaysStats.topWalkers[0].trips;
+    const topWalkers = todaysStats.topWalkers.filter(
+      (walker) => walker.trips === maxTrips,
+    );
+    return topWalkers.map((walker) => firstName(walker.user.name)).join(" & ");
+  }, [todaysStats.topWalkers]);
+
   const statsBadges = useMemo(() => {
     const badgeSet = new Set<{ key: string; badge: JSX.Element }>();
 
@@ -118,13 +127,13 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
       ),
     });
 
-    if (todaysStats.topWalkers.length > 0) {
+    if (topWalkerNames) {
       badgeSet.add({
         key: "topWalker",
         badge: (
           <Badge className={cn("bg-yellow-200 text-yellow-950", badgeStyle)}>
             <AwardIcon size={16} />
-            {firstName(todaysStats.topWalkers?.[0]?.user.name)}
+            {topWalkerNames}
           </Badge>
         ),
       });
@@ -141,7 +150,7 @@ export const QuickStats = ({ entries }: QuickStatsProps) => {
     });
 
     return badgeSet;
-  }, [streakCount, lastTripEnded, temperature, todaysStats]);
+  }, [streakCount, lastTripEnded, temperature, todaysStats, topWalkerNames]);
 
   return (
     <motion.section className="flex items-center gap-2.5 mb-6 flex-wrap" layout>
