@@ -18,9 +18,9 @@ export const calculatePoopChance = (
 ): number => {
   const previousEntries = entries.filter((entry) => entry._id !== newTrip._id);
 
-  const lastPoopTrip = [...previousEntries]
-    .reverse()
-    .find((entry) => entry.poops && entry.poops > 0);
+  const lastPoopTrip = [...previousEntries].find(
+    (entry) => entry.poops && entry.poops > 0,
+  );
 
   let poopCounter = 0;
   if (lastPoopTrip) {
