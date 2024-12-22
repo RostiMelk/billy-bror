@@ -50,7 +50,10 @@ export function ChartTripsPerDay({ chartData }: { chartData: ChartData[] }) {
   const highestValue = Math.max(...chartData.map((data) => data.trips));
 
   return (
-    <ChartContainer config={chartConfig}>
+    <ChartContainer
+      config={chartConfig}
+      className="[&_.recharts-responsive-container]:!h-fit"
+    >
       <div className="relative grid grid-cols-[auto_1fr]">
         <div className="sticky left-0">
           <ResponsiveContainer width={20} height="100%">
