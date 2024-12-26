@@ -49,6 +49,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import groq from "groq";
 
 interface SubmitDialogProps {
   entry: ResolvedEntryDocument | null;
@@ -57,7 +58,11 @@ interface SubmitDialogProps {
   onSubmit: () => void;
 }
 
-const USER_QUERY = `*[_type== "user"] | order(lower(title) asc)`;
+const USER_QUERY = groq`*[_type == "user"] {
+  "walksLastSevenDays": count(*[_type == "entry" && ^._id in users[]._ref && status == "completed" && location == "outside" && dateTime(endTime) > dateTime(now()) - 60*60*24*7]),
+  "lastWalk": *[_type == "entry" && ^._id in users[]._ref && status == "completed" && location == "outside"] | order(endTime desc) [0].endTime,
+  ...
+} | order(walksLastSevenDays desc)`;
 
 const formatTimeToHtmlInput = (date?: string) => {
   const dateObj = date ? new Date(date) : new Date();
@@ -100,20 +105,21 @@ export const SubmitDialog = ({
   const [isUserSelectOpen, setIsUserSelectOpen] = useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   const { data: allUsers } = useClient<User[]>(USER_QUERY);
+
   const allUserOptions = useMemo(() => {
-    return (
-      allUsers?.map((user) => ({
-        label: capitalizeName(user.name),
-        shortLabel: firstName(user.name),
-        value: hashEmail(user.email),
-        icon: (props: AvatarProps) => (
-          <Avatar {...props}>
-            <AvatarImage src={user.image || undefined} />
-          </Avatar>
-        ),
-      })) || []
-    );
+    if (!allUsers) return [];
+    return allUsers.map((user: User) => ({
+      label: capitalizeName(user.name),
+      shortLabel: firstName(user.name),
+      value: hashEmail(user.email),
+      icon: (props: AvatarProps) => (
+        <Avatar {...props}>
+          <AvatarImage src={user.image || undefined} />
+        </Avatar>
+      ),
+    }));
   }, [allUsers]);
+
   const defaultUsers = useMemo(() => {
     return entry?.users?.map((user) => hashEmail(user.email)) || [];
   }, [entry]);
