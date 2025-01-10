@@ -19,7 +19,7 @@ export function useTimeAgo(date: string | number | Date): string {
           setTimeAgo(`${minutes} min siden`);
           break;
         }
-        case diffInSeconds < 3600 * 3: {
+        case diffInSeconds < 3600 * 6: {
           const minutes = Math.floor(diffInSeconds / 60) % 60;
           const hours = Math.floor(diffInSeconds / 3600);
           setTimeAgo(
